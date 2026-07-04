@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #ffffff;
+  --color-surface: #f5f9ff;
+  --color-foreground: #0a0a0a;
+  --color-muted: #6b7280;
+  --color-border: #e6e6e6;
+  --color-primary: #0071e3;
+  --color-label: #ff791b;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: rgba(0, 113, 227, 0.15);
+  color: var(--color-foreground);
+}
+
+/* ── Section label utility ───────────────────────────── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #ff791b;
+}
+
+/* ── Tool icon wave ──────────────────────────────────── */
+@keyframes wave-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-24px); }
+}
+
+@keyframes drift-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-wave  { animation: wave-float 4s ease-in-out infinite; }
+.animate-drift { animation: drift-left 80s linear infinite; }
+
+/* ── Fade up ─────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
+
+/* ── Hero heading char-in ────────────────────────────── */
+@keyframes char-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Hero sweeping blue orbs ─────────────────────────── */
+@keyframes hero-orb-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  20%  { transform: translate(30vw, -20vh) scale(1.12); }
+  45%  { transform: translate(62vw, 12vh) scale(0.88); }
+  65%  { transform: translate(38vw, 38vh) scale(1.08); }
+  85%  { transform: translate(8vw, 22vh) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes hero-orb-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(-22vw, 18vh) scale(1.1); }
+  50%  { transform: translate(-52vw, -12vh) scale(0.9); }
+  75%  { transform: translate(-28vw, -36vh) scale(1.06); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes hero-orb-c {
+  0%   { transform: translate(0, 0) scale(1); }
+  30%  { transform: translate(20vw, 30vh) scale(1.15); }
+  60%  { transform: translate(-30vw, 10vh) scale(0.85); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-hero-orb-a { animation: hero-orb-a 18s ease-in-out infinite; }
+.animate-hero-orb-b { animation: hero-orb-b 22s ease-in-out infinite; }
+.animate-hero-orb-c { animation: hero-orb-c 26s ease-in-out infinite; }
+
+/* ── Contact banner orbs ─────────────────────────────── */
+@keyframes orb-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(250px, -80px) scale(1.14); }
+  50%  { transform: translate(480px, 120px) scale(0.86); }
+  75%  { transform: translate(180px, 260px) scale(1.08); }
+}
+
+@keyframes orb-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  30%  { transform: translate(-220px, 140px) scale(1.1); }
+  60%  { transform: translate(-440px, -100px) scale(0.88); }
+  80%  { transform: translate(-160px, -240px) scale(1.06); }
+}
+
+.animate-orb-a { animation: orb-a 16s ease-in-out infinite; }
+.animate-orb-b { animation: orb-b 20s ease-in-out infinite; }
+
+/* ── Scrollbar ───────────────────────────────────────── */
+.scrollbar-hide                 { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Curvy decorative path pulse ────────────────────── */
+@keyframes path-drift {
+  0%, 100% { stroke-dashoffset: 0; }
+  50%       { stroke-dashoffset: -40; }
+}
