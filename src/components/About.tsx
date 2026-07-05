@@ -170,7 +170,7 @@ function GlassCard({ statsActive, flipDone }: { statsActive: boolean; flipDone: 
 
           {/* Footer */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-[#e6e6e6] bg-white px-4 py-4 sm:px-5">
-            <span className="text-[14px] text-gray-400">Currently working in</span>
+            <span className="text-[14px] text-gray-400">Currently working at</span>
             <a
               href="https://www.dubizzlelabs.com/"
               target="_blank"
