@@ -6,9 +6,9 @@ import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
-import { Journey } from "@/components/Journey";
 import { FeaturedWork } from "@/components/FeaturedWork";
 import { SideProjects } from "@/components/SideProjects";
+import { FeaturedThought } from "@/components/FeaturedThought";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 
@@ -17,34 +17,36 @@ export function HomeClient() {
   const [navVisible, setNavVisible] = useState(false);
 
   useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("scroll-locked");
+    const safety = setTimeout(() => {
+      document.documentElement.classList.remove("scroll-locked");
+    }, 5000);
     return () => {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
+      clearTimeout(safety);
+      document.documentElement.classList.remove("scroll-locked");
     };
   }, []);
 
   const handleSplashDone = useCallback(() => {
     setSplashDone(true);
-    setTimeout(() => {
-      setNavVisible(true);
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }, 1400);
+    // Hero.tsx owns the scroll lock from here — it unlocks after animation
+  }, []);
+
+  const handleHeroReady = useCallback(() => {
+    setNavVisible(true);
   }, []);
 
   return (
     <>
       <SplashScreen onDone={handleSplashDone} />
       <Navigation visible={navVisible} />
-      <main className="relative z-10">
-        <Hero splashDone={splashDone} />
+      <main className="relative z-10 pb-8">
+        <Hero splashDone={splashDone} onReady={handleHeroReady} />
         <About />
         <ToolsMarquee />
-        <Journey />
         <FeaturedWork />
         <SideProjects />
+        <FeaturedThought />
         <Contact />
       </main>
       <Footer />

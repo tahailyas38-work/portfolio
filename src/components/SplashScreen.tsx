@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { Logo } from "@/components/Logo";
 
 type Phase = "black" | "logo-in" | "hold" | "fade-out";
 
@@ -46,14 +46,7 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
           transition: "opacity 0.55s ease, transform 0.6s ease",
         }}
       >
-        <Image
-          src="/logo-white.png"
-          alt="Taha"
-          width={200}
-          height={50}
-          className="h-12 w-auto"
-          priority
-        />
+        <Logo variant="white" className="h-14 w-auto sm:h-16" />
       </div>
     </div>
   );

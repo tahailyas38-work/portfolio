@@ -5,6 +5,8 @@ export const siteConfig = {
     "Product Designer at Dubizzle Labs focused on simplifying complex workflows and creating seamless experiences.",
   email: "tahailyas38@gmail.com",
   linkedin: "https://linkedin.com/in/muhammad-taha-madni-996a841b2",
+  cv: "/Resume.pdf",
+  ndaPassword: "Protect_ed@casestudy",
 };
 
 export const navLinks = [
@@ -12,6 +14,59 @@ export const navLinks = [
   { label: "Case Studies", href: "#featured-work" },
   { label: "Work", href: "#side-projects" },
 ];
+
+export const workflowTools = [
+  { name: "Figma", icon: "/tools/figma.png", role: "Design & systems" },
+  { name: "Framer", icon: "/tools/framer.png", role: "Prototype & ship" },
+  { name: "Miro", icon: "/tools/miro.png", role: "Research & mapping" },
+  { name: "Claude", icon: "/tools/claude.png", role: "Ideate & refine" },
+  { name: "Cursor", icon: "/tools/cursor.png", role: "Build & iterate" },
+  { name: "Adobe", icon: "/tools/adobe.png", role: "Visual polish" },
+];
+
+export const designPrinciples = [
+  {
+    title: "Simplicity over noise",
+    description: "Every element earns its place. Clarity beats decoration.",
+    icon: "◯",
+  },
+  {
+    title: "Systems before screens",
+    description: "Scalable patterns first — screens are expressions of the system.",
+    icon: "⬡",
+  },
+  {
+    title: "Design with business impact",
+    description: "Great UX connects user needs to measurable outcomes.",
+    icon: "↗",
+  },
+  {
+    title: "Iterate fast with AI",
+    description: "Use AI to explore faster, validate sooner, and ship smarter.",
+    icon: "✦",
+  },
+];
+
+export const howIWorkSteps = [
+  { step: "Research", description: "Understand users, constraints, and business goals." },
+  { step: "Simplify", description: "Distill complexity into clear flows and structures." },
+  { step: "Prototype", description: "Build interactive concepts to test ideas early." },
+  { step: "Validate", description: "Test with users and stakeholders, refine quickly." },
+  { step: "Ship", description: "Hand off with clarity and support through launch." },
+];
+
+export const beyondDesign = [
+  { label: "Building startup ideas", emoji: "🚀" },
+  { label: "Exploring AI tools", emoji: "✦" },
+  { label: "Watching design breakdowns", emoji: "▶" },
+  { label: "Coffee + random side projects", emoji: "☕" },
+];
+
+export const featuredQuote = {
+  text: "Good design is actually a lot harder to notice than poor design, because good designs fit our needs so well that the design is invisible.",
+  author: "Don Norman",
+  role: "Author, The Design of Everyday Things",
+};
 
 export const tools = [
   { name: "Figma", icon: "/tools/figma.png", size: 52 },
@@ -33,6 +88,8 @@ export const tools = [
   { name: "Google Analytics", icon: "/tools/google-analytics.png", size: 52 },
 ];
 
+// New order: Investor Hub, Affiliate Platform Revamp, PropOne Mobile App,
+//            PropForce CRM, PropOne RMS Revamp, PropOne Facility Management
 export const caseStudies: {
   id: string;
   title: string;
@@ -43,6 +100,36 @@ export const caseStudies: {
   image?: string;
   locked?: boolean;
 }[] = [
+  {
+    id: "investor-hub",
+    title: "Investor Hub",
+    description:
+      "Designed and revamped an investment-focused consumer platform.",
+    tags: ["Web", "Consumer", "Revamp"],
+    status: "Live",
+    gradient: "linear-gradient(135deg, #fff1f2 0%, #fda4af 100%)",
+    image: "/projects/case-studies/investor-hub.jpg",
+  },
+  {
+    id: "affiliate-platform-revamp",
+    title: "Affiliate Platform Revamp",
+    description:
+      "Unified multiple Zameen and Bayut affiliate platforms into one scalable global platform.",
+    tags: ["Web", "Consumer", "Revamp"],
+    status: "Live",
+    gradient: "linear-gradient(135deg, #fffbeb 0%, #fcd88a 100%)",
+    image: "/projects/case-studies/affiliate-platform-revamp.jpg",
+  },
+  {
+    id: "propone-mobile-app",
+    title: "PropOne Mobile App",
+    description:
+      "Designed a consumer-focused mobile application experience for property management.",
+    tags: ["Mobile", "Consumer", "UX Design"],
+    status: "Live",
+    gradient: "linear-gradient(135deg, #faf5ff 0%, #d8b4fe 100%)",
+    image: "/projects/case-studies/propone-mobile-app.jpg",
+  },
   {
     id: "propforce-crm",
     title: "PropForce CRM",
@@ -73,36 +160,9 @@ export const caseStudies: {
     gradient: "linear-gradient(135deg, #e6fffa 0%, #a8dfd4 100%)",
     locked: true,
   },
-  {
-    id: "propone-mobile-app",
-    title: "PropOne Mobile App",
-    description:
-      "Designed a consumer-focused mobile application experience for property management.",
-    tags: ["Mobile", "Consumer", "UX Design"],
-    status: "Live",
-    gradient: "linear-gradient(135deg, #faf5ff 0%, #d8b4fe 100%)",
-  },
-  {
-    id: "affiliate-platform-revamp",
-    title: "Affiliate Platform Revamp",
-    description:
-      "Unified multiple Zameen and Bayut affiliate platforms into one scalable global platform.",
-    tags: ["Web", "Consumer", "Revamp"],
-    status: "Live",
-    gradient: "linear-gradient(135deg, #fffbeb 0%, #fcd88a 100%)",
-  },
-  {
-    id: "investor-hub",
-    title: "Investor Hub",
-    description:
-      "Designed and revamped an investment-focused consumer platform.",
-    tags: ["Web", "Consumer", "Revamp"],
-    status: "Live",
-    gradient: "linear-gradient(135deg, #fff1f2 0%, #fda4af 100%)",
-    image: "/investor-hub-case-study.jpg",
-  },
 ];
 
+// Order: The Bare Edit, Protect It, AFJA (Vanber removed)
 export const sideProjects: {
   id: string;
   title: string;
@@ -110,19 +170,10 @@ export const sideProjects: {
   tags: string[];
   status: "Live" | "Concept";
   gradient: string;
+  image?: string;
   locked?: boolean;
   href?: string;
 }[] = [
-  {
-    id: "van-ber",
-    title: "Van-Ber",
-    description:
-      "Transportation-focused mobile experience selected for exhibition showcase and linked to Cyberport University Partnership Programme 2026.",
-    tags: ["Mobile", "UX Design"],
-    status: "Concept",
-    gradient: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-    locked: true,
-  },
   {
     id: "the-bare-edit",
     title: "The Bare Edit",
@@ -131,6 +182,8 @@ export const sideProjects: {
     tags: ["E-Commerce", "UX/UI Design"],
     status: "Live",
     gradient: "linear-gradient(135deg, #fdf6f0 0%, #e8c9b0 100%)",
+    image: "/projects/side-projects/the-bare-edit.jpg",
+    href: "https://thebareedit.pk",
   },
   {
     id: "protect-it",
@@ -140,6 +193,8 @@ export const sideProjects: {
     tags: ["E-Commerce", "UX/UI Design"],
     status: "Live",
     gradient: "linear-gradient(135deg, #18181b 0%, #3f3f46 100%)",
+    image: "/projects/side-projects/protect-it.jpg",
+    href: "https://protectit.pk",
   },
   {
     id: "afja-trading",
@@ -149,6 +204,8 @@ export const sideProjects: {
     tags: ["Brand", "UX/UI Design"],
     status: "Live",
     gradient: "linear-gradient(135deg, #f0faf5 0%, #a7e8c4 100%)",
+    image: "/projects/side-projects/afja-trading.jpg",
+    href: "https://afjatrading.com",
   },
 ];
 

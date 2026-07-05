@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { siteConfig } from "@/lib/data";
+import { ContactNetwork } from "@/components/ContactNetwork";
 
 export function Contact() {
   const [copied, setCopied] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mouse, setMouse] = useState({ x: 50, y: 50 });
 
   const copyEmail = async () => {
     try {
@@ -16,73 +19,92 @@ export function Contact() {
     }
   };
 
-  return (
-    <section id="contact" className="py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#0a0a0a] px-8 py-16 sm:px-12 sm:py-20 lg:px-16 lg:py-24">
+  const onMouseMove = (e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setMouse({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  };
 
-          {/* Dot grid texture */}
+  const parallax = (factor: number) => ({
+    transform: `translate(${(mouse.x - 50) * factor}px, ${(mouse.y - 50) * factor}px)`,
+  });
+
+  return (
+    <section id="contact" className="py-16 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
+        <div
+          ref={containerRef}
+          onMouseMove={onMouseMove}
+          className="relative overflow-hidden rounded-[1.5rem] bg-[#0a0a0a] px-6 py-10 sm:rounded-[2rem] sm:px-12 sm:py-16 lg:px-16 lg:py-20"
+        >
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+            <ContactNetwork mouse={mouse} />
+          </div>
+
           <div
             aria-hidden="true"
-            className="absolute inset-0 opacity-40"
+            className="pointer-events-none absolute inset-0 opacity-[0.18]"
             style={{
-              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)",
+              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)",
               backgroundSize: "28px 28px",
             }}
           />
 
-          {/* Animated blue orbs */}
-          <div aria-hidden="true" className="animate-orb-a absolute -left-48 -top-40 h-[500px] w-[500px] rounded-full bg-[#0071e3]/30 blur-[80px]" />
-          <div aria-hidden="true" className="animate-orb-b absolute -bottom-40 -right-48 h-[560px] w-[560px] rounded-full bg-[#0071e3]/20 blur-[80px]" />
-          <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0071e3]/10 blur-[60px]" />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/90 via-[#0a0a0a]/55 to-transparent"
+          />
+
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-24 -top-24 transition-transform duration-300 ease-out will-change-transform"
+            style={parallax(-0.6)}
+          >
+            <div className="animate-orb-a h-[320px] w-[320px] rounded-full bg-[#0071e3]/20 blur-[80px]" />
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-24 -right-24 transition-transform duration-300 ease-out will-change-transform"
+            style={parallax(0.8)}
+          >
+            <div className="animate-orb-b h-[320px] w-[320px] rounded-full bg-[#0071e3]/10 blur-[80px]" />
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-[12%] top-[18%] transition-transform duration-300 ease-out will-change-transform"
+            style={parallax(1.2)}
+          >
+            <div className="h-[180px] w-[180px] animate-hero-orb-c rounded-full bg-[#ff791b]/[0.07] blur-[60px]" />
+          </div>
 
           <div className="relative z-10 max-w-xl">
             <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.16em] text-[#ff791b]">
               Let&apos;s Connect
             </p>
-
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className="text-[1.75rem] font-bold leading-[1.1] tracking-tight text-white sm:text-[2rem] lg:text-[2.5rem]">
               Let&apos;s build something together.
             </h2>
-
-            <p className="mt-5 text-base leading-[1.8] text-white/60 sm:text-lg">
+            <p className="mt-5 text-[13px] leading-[1.8] text-white/60 lg:text-[15px]">
               I&apos;m always open to discussing product ideas, collaborations, or opportunities
               to create meaningful digital experiences.
             </p>
-
             <div className="mt-10 flex flex-wrap gap-4">
               <button
                 type="button"
                 onClick={copyEmail}
-                className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition-all hover:bg-white/90 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-gray-900 shadow-lg transition-all hover:bg-white/90 active:scale-95 lg:px-6 lg:py-3 lg:text-[16px]"
               >
-                {copied ? (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M3 8L6.5 11.5L13 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M2 4a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" strokeWidth="1.2" />
-                      <path d="M2 5l6 4.5L14 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                    </svg>
-                    Email me
-                  </>
-                )}
+                {copied ? "Copied!" : "Email me"}
               </button>
-
               <a
                 href={siteConfig.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40 hover:bg-white/8 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-[14px] font-semibold text-white transition-all hover:border-white/40 hover:bg-white/10 active:scale-95 lg:px-6 lg:py-3 lg:text-[16px]"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
                 LinkedIn
               </a>
             </div>

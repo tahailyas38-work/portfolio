@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { tools } from "@/lib/data";
 
-const ICON_SIZE = 74; // 1.2× previous 62px
+const ICON_SIZE = 74;
 
 function ToolIcon({
   name,
@@ -28,7 +28,6 @@ function ToolIcon({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Tooltip */}
       {hovered && (
         <div className="absolute bottom-full left-1/2 z-10 mb-3 -translate-x-1/2">
           <div className="whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-[12px] font-medium text-background shadow-lg">
@@ -38,7 +37,7 @@ function ToolIcon({
         </div>
       )}
 
-      <div className="flex h-[112px] w-[112px] cursor-default items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-border/60 transition-shadow hover:shadow-md sm:h-[120px] sm:w-[120px]">
+      <div className="relative z-[1] flex h-[100px] w-[100px] cursor-default items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-border/60 transition-shadow hover:shadow-md sm:h-[108px] sm:w-[108px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={icon}
@@ -58,16 +57,16 @@ export function ToolsMarquee() {
   const items = [...tools, ...tools, ...tools];
 
   return (
-    <section className="relative mt-0 overflow-hidden py-16 lg:py-20">
-      {/* Edge fades */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent" />
+    <section id="workflow-tools" className="relative overflow-hidden pb-32 pt-16 lg:pb-40 lg:pt-20">
 
-      <p className="mb-16 text-center text-sm font-medium text-muted lg:mb-20">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white via-white/80 to-transparent" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white via-white/80 to-transparent" />
+
+      <p className="relative z-[1] mb-16 text-center text-[13px] font-medium text-muted lg:mb-20 lg:text-sm">
         Design &amp; Development Tools
       </p>
 
-      <div className="relative">
+      <div className="relative z-[1]">
         <div className="animate-drift flex w-max gap-5 px-6 sm:gap-6">
           {items.map((tool, index) => (
             <ToolIcon

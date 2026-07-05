@@ -12,8 +12,148 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+  overflow-x: clip;
 }
+
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden !important;
+}
+
+/* ── Section base classes (no snap) ─────────────────── */
+.snap-hero,
+.snap-section-hero {
+  min-height: 100svh;
+}
+
+.snap-about {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) {
+  .snap-about {
+    min-height: 100svh;
+  }
+}
+
+/* Featured Work — left scrolls, right sticky */
+.featured-work-grid {
+  align-items: stretch;
+}
+
+.case-study-step {
+  position: relative;
+  min-height: auto;
+  padding-block: 2.5rem;
+}
+
+@media (max-width: 1023px) {
+  .case-study-step {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .case-study-step {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 100svh;
+    padding-block: 4rem;
+  }
+}
+
+.featured-work-visual-column {
+  position: sticky;
+  top: 72px;
+  align-self: start;
+  min-width: 0;
+  width: 100%;
+}
+
+.featured-work-visual-sticky {
+  display: flex;
+  height: calc(100svh - 72px);
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-work-visual-frame {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: min(68svh, 540px);
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+@keyframes hero-bg-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.hero-bg-enter {
+  animation: hero-bg-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── 3D preserve ─────────────────────────────────────── */
+.preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+
+/* ── Floating UI layers ──────────────────────────────── */
+@keyframes float-layer-a {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50%       { transform: translateY(-14px) translateZ(8px); }
+}
+@keyframes float-layer-b {
+  0%, 100% { transform: translateY(0) translateZ(0) rotate(0deg); }
+  50%       { transform: translateY(-10px) translateZ(16px) rotate(1deg); }
+}
+@keyframes float-layer-c {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50%       { transform: translateY(-18px) translateZ(24px); }
+}
+.animate-float-a { animation: float-layer-a 6s ease-in-out infinite; }
+.animate-float-b { animation: float-layer-b 7.5s ease-in-out infinite 0.5s; }
+.animate-float-c { animation: float-layer-c 5.5s ease-in-out infinite 1s; }
+
+/* ── Flow pulse (workflow tools) ─────────────────────── */
+@keyframes flow-pulse {
+  0%   { stroke-dashoffset: 24; opacity: 0.3; }
+  50%  { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: -24; opacity: 0.3; }
+}
+.animate-flow-pulse { animation: flow-pulse 2.5s ease-in-out infinite; }
+
+/* ── Text reveal ─────────────────────────────────────── */
+@keyframes text-reveal {
+  from { opacity: 0; transform: translateY(40px); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.text-reveal-active { animation: text-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* ── Card flip ───────────────────────────────────────── */
+.flip-card { perspective: 1000px; }
+.flip-card-inner {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+.flip-card:hover .flip-card-inner { transform: rotateY(8deg) rotateX(-4deg); }
+
+/* ── Progress line draw ──────────────────────────────── */
+@keyframes line-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+.line-draw-active { animation: line-draw 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* ── Subtle parallax helper ──────────────────────────── */
+.parallax-slow { will-change: transform; transition: transform 0.1s linear; }
+
 
 body {
   background-color: var(--color-background);
@@ -21,6 +161,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
 ::selection {
@@ -28,9 +169,22 @@ body {
   color: var(--color-foreground);
 }
 
+/* ── Navigation ──────────────────────────────────────── */
+.nav-header {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.nav-header--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* ── Section label utility ───────────────────────────── */
 .section-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -119,4 +273,47 @@ body {
 @keyframes path-drift {
   0%, 100% { stroke-dashoffset: 0; }
   50%       { stroke-dashoffset: -40; }
+}
+
+/* ── Holographic projector scan ──────────────────────── */
+@keyframes projector-scan {
+  0%   { top: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── About card 360° Y-axis flip entrance ────────────── */
+@keyframes card-spin-y {
+  0%   { transform: perspective(1000px) rotateY(0deg) scale(0.92); opacity: 0.5; }
+  30%  { opacity: 1; }
+  100% { transform: perspective(1000px) rotateY(360deg) scale(1); opacity: 1; }
+}
+.card-flip-enter {
+  animation: card-spin-y 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Side projects carousel fade ────────────────────── */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.slide-enter { animation: slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* ── Footer logo shimmer ─────────────────────────────── */
+@keyframes logo-streak {
+  0%   { left: -60%; opacity: 0; }
+  5%   { opacity: 1; }
+  60%  { opacity: 1; }
+  65%, 100% { left: 160%; opacity: 0; }
+}
+.logo-shimmer-streak {
+  position: absolute;
+  top: 0;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0.18) 60%, transparent 100%);
+  transform: skewX(-18deg);
+  animation: logo-streak 4s ease-in-out infinite;
+  pointer-events: none;
 }
