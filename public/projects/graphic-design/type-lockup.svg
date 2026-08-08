@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="700" viewBox="0 0 700 700" fill="none">
+  <rect width="700" height="700" fill="#0A0A0A"/>
+  <text x="80" y="300" fill="white" font-family="system-ui,sans-serif" font-size="92" font-weight="800" letter-spacing="-3">TAHA</text>
+  <text x="80" y="390" fill="#0071E3" font-family="system-ui,sans-serif" font-size="92" font-weight="800" letter-spacing="-3">MADNI</text>
+  <rect x="80" y="440" width="120" height="8" fill="#FF791B"/>
+</svg>

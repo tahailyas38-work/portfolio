@@ -1,0 +1,322 @@
+[
+  {
+    "id": "brainwave",
+    "title": "Brainwave",
+    "tagline": "Interface study \u2014 AI product marketing & neon UI systems.",
+    "cardImage": "/projects/design-studies/brainwave/card.webp",
+    "fullImage": "/projects/design-studies/brainwave/page-1.webp",
+    "accent": "#0E0C15",
+    "sections": [
+      {
+        "image": "/projects/design-studies/brainwave/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/brainwave/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/brainwave/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/brainwave/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/brainwave/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/brainwave/section-6.webp",
+        "showDividersAfter": false
+      }
+    ]
+  },
+  {
+    "id": "aimia",
+    "title": "Aimia",
+    "cardImage": "/projects/design-studies/aimia/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/aimia/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/aimia/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/aimia/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/aimia/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/aimia/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/aimia/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#0E0C15",
+    "fullImage": "/projects/design-studies/aimia/page-1.webp"
+  },
+  {
+    "id": "br-f",
+    "title": "BR.F",
+    "cardImage": "/projects/design-studies/br-f/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/br-f/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/br-f/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/br-f/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/br-f/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/br-f/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/br-f/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#EEF2F7",
+    "fullImage": "/projects/design-studies/br-f/page-1.webp"
+  },
+  {
+    "id": "carza",
+    "title": "Carza",
+    "cardImage": "/projects/design-studies/carza/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/carza/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/carza/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/carza/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/carza/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/carza/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/carza/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#F4F6FA",
+    "fullImage": "/projects/design-studies/carza/page-1.webp"
+  },
+  {
+    "id": "edg3-labs",
+    "title": "Edg3 Labs",
+    "cardImage": "/projects/design-studies/edg3-labs/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/edg3-labs/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/edg3-labs/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/edg3-labs/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/edg3-labs/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/edg3-labs/section-5.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#F8FAFC",
+    "fullImage": "/projects/design-studies/edg3-labs/page-1.webp"
+  },
+  {
+    "id": "foundation",
+    "title": "Foundation",
+    "cardImage": "/projects/design-studies/foundation/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/foundation/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/foundation/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/foundation/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/foundation/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/foundation/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/foundation/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#F3F0FF",
+    "fullImage": "/projects/design-studies/foundation/page-1.webp"
+  },
+  {
+    "id": "gadget",
+    "title": "Gadget",
+    "cardImage": "/projects/design-studies/gadget/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/gadget/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/gadget/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/gadget/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/gadget/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/gadget/section-5.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#FFF7ED",
+    "fullImage": "/projects/design-studies/gadget/page-1.webp"
+  },
+  {
+    "id": "prefuma",
+    "title": "Prefuma",
+    "cardImage": "/projects/design-studies/prefuma/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/prefuma/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/prefuma/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/prefuma/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/prefuma/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/prefuma/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/prefuma/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#ECFDF5",
+    "fullImage": "/projects/design-studies/prefuma/page-1.webp"
+  },
+  {
+    "id": "speedo",
+    "title": "Speedo",
+    "tagline": "Interface study \u2014 performance & motion-led UI.",
+    "cardImage": "/projects/design-studies/speedo/card.webp",
+    "fullImage": "/projects/design-studies/speedo/page-1.webp",
+    "accent": "#EFF6FF",
+    "sections": [
+      {
+        "image": "/projects/design-studies/speedo/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/speedo/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/speedo/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/speedo/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/speedo/section-5.webp",
+        "showDividersAfter": false
+      }
+    ]
+  },
+  {
+    "id": "travcyl",
+    "title": "Travcyl",
+    "cardImage": "/projects/design-studies/travcyl/card.webp",
+    "sections": [
+      {
+        "image": "/projects/design-studies/travcyl/section-1.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/travcyl/section-2.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/travcyl/section-3.webp",
+        "showDividersAfter": true
+      },
+      {
+        "image": "/projects/design-studies/travcyl/section-4.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/travcyl/section-5.webp",
+        "showDividersAfter": false
+      },
+      {
+        "image": "/projects/design-studies/travcyl/section-6.webp",
+        "showDividersAfter": false
+      }
+    ],
+    "accent": "#FDF2F8",
+    "fullImage": "/projects/design-studies/travcyl/page-1.webp"
+  }
+]

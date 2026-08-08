@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#F7F3EE"/>
+  <rect x="60" y="60" width="680" height="880" rx="28" fill="white" stroke="#E6E6E6"/>
+  <rect x="120" y="140" width="200" height="200" rx="24" fill="#FF791B"/>
+  <rect x="360" y="140" width="320" height="90" rx="12" fill="#0A0A0A"/>
+  <rect x="360" y="260" width="240" height="24" rx="8" fill="#E6E6E6"/>
+  <rect x="360" y="300" width="180" height="24" rx="8" fill="#E6E6E6"/>
+  <rect x="120" y="400" width="560" height="2" fill="#E6E6E6"/>
+  <rect x="120" y="460" width="560" height="18" rx="6" fill="#D1D5DB"/>
+  <rect x="120" y="500" width="480" height="18" rx="6" fill="#E5E7EB"/>
+  <rect x="120" y="540" width="520" height="18" rx="6" fill="#E5E7EB"/>
+  <rect x="120" y="620" width="260" height="180" rx="20" fill="#0071E3" opacity="0.12"/>
+  <rect x="420" y="620" width="260" height="180" rx="20" fill="#FF791B" opacity="0.14"/>
+  <text x="400" y="900" text-anchor="middle" fill="#6B7280" font-family="system-ui,sans-serif" font-size="16" font-weight="600" letter-spacing="3">BRAND SYSTEM</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#0B1220"/>
+  <circle cx="400" cy="300" r="140" fill="#0071E3"/>
+  <circle cx="400" cy="300" r="88" fill="#0B1220"/>
+  <path d="M360 240h80v20H400v100h-20V260h-20V240z" fill="white"/>
+  <text x="400" y="520" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="4">MARK</text>
+</svg>

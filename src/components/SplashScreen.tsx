@@ -1,52 +1,78 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Logo } from "@/components/Logo";
 
-type Phase = "black" | "logo-in" | "hold" | "fade-out";
-
+/**
+ * Splash: avatar color-fills top → bottom over ~2s, then fades into the site.
+ */
 export function SplashScreen({ onDone }: { onDone: () => void }) {
-  const [phase, setPhase] = useState<Phase>("black");
+  const [fill, setFill] = useState(0);
+  const [phase, setPhase] = useState<"fill" | "hold" | "out">("fill");
   const [gone, setGone] = useState(false);
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    // Runs once on mount — stable timers, no re-firing on prop change
-    const t0 = setTimeout(() => setPhase("logo-in"), 120);
-    const t1 = setTimeout(() => setPhase("hold"), 850);
-    const t2 = setTimeout(() => setPhase("fade-out"), 1550);
-    const t3 = setTimeout(() => {
-      setGone(true);
-      onDoneRef.current();
-    }, 2250);
-    return () => [t0, t1, t2, t3].forEach(clearTimeout);
-  }, []); // intentionally empty — runs once
+    const duration = 2000;
+    const start = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // Ease-out so the last bits of color land softly
+      const eased = 1 - Math.pow(1 - t, 2.4);
+      setFill(eased * 100);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setPhase("hold");
+        window.setTimeout(() => setPhase("out"), 280);
+        window.setTimeout(() => {
+          setGone(true);
+          onDoneRef.current();
+        }, 280 + 650);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   if (gone) return null;
 
-  const fading = phase === "fade-out";
-  const logoVisible = phase === "logo-in" || phase === "hold";
+  const fading = phase === "out";
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[200] flex items-center justify-center"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-[#080808]"
       style={{
-        backgroundColor: "#080808",
         opacity: fading ? 0 : 1,
-        transition: fading ? "opacity 0.7s cubic-bezier(0.4,0,0.2,1)" : "none",
+        transition: fading ? "opacity 0.65s cubic-bezier(0.4,0,0.2,1)" : "none",
         pointerEvents: fading ? "none" : "all",
       }}
     >
-      <div
-        style={{
-          opacity: logoVisible ? 1 : 0,
-          transform: logoVisible ? "scale(1)" : phase === "black" ? "scale(0.84)" : "scale(1.08)",
-          transition: "opacity 0.55s ease, transform 0.6s ease",
-        }}
-      >
-        <Logo variant="white" className="h-14 w-auto sm:h-16" />
+      <div className="relative h-[88px] w-[72px] sm:h-[100px] sm:w-[82px]">
+        {/* Desaturated base — “empty” waiting to fill */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/Avatar.png"
+          alt=""
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-contain object-center opacity-25 grayscale"
+        />
+        {/* Full-color reveal, clipped top → bottom */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/Avatar.png"
+          alt=""
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-contain object-center"
+          style={{
+            clipPath: `inset(0 0 ${100 - fill}% 0)`,
+            WebkitClipPath: `inset(0 0 ${100 - fill}% 0)`,
+          }}
+        />
       </div>
     </div>
   );

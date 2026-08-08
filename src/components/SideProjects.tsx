@@ -178,12 +178,16 @@ export function SideProjects() {
   const project = PROJECTS[current];
 
   return (
-    <section id="side-projects" className="py-16 sm:py-24 lg:py-32" style={{ backgroundColor: "#f0f4f8" }}>
+    <div id="side-businesses">
+      <section
+        id="side-projects"
+        className="py-16 sm:py-24 lg:py-32"
+      >
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
 
-        <p className="section-label">Building Outside the 9&ndash;5</p>
+        <p className="section-label">Side Businesses</p>
         <h2 className="mt-2 max-w-2xl text-[1.75rem] font-bold leading-[1.15] tracking-tight text-gray-900 sm:text-[2rem] lg:text-[2.5rem]">
-          Side projects and experiments built outside work.
+          Building Outside the 9&ndash;5
         </h2>
         <p className="mt-2 max-w-md text-[13px] leading-[1.75] text-gray-500 lg:text-[15px]">
           A collection of products and concepts where I explore design systems,
@@ -229,6 +233,7 @@ export function SideProjects() {
         </div>
 
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

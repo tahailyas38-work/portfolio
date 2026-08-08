@@ -59,9 +59,6 @@ export function ToolsMarquee() {
   return (
     <section id="workflow-tools" className="relative overflow-hidden pb-32 pt-16 lg:pb-40 lg:pt-20">
 
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white via-white/80 to-transparent" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white via-white/80 to-transparent" />
-
       <p className="relative z-[1] mb-16 text-center text-[13px] font-medium text-muted lg:mb-20 lg:text-sm">
         Design &amp; Development Tools
       </p>

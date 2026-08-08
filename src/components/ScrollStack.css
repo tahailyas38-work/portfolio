@@ -1,0 +1,80 @@
+.scroll-stack-scroller {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: visible;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: scroll-position;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-stack-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-stack-inner {
+  padding: 20vh 5rem 50rem;
+  min-height: 100vh;
+}
+
+.scroll-stack-card-wrapper {
+  position: relative;
+}
+
+.scroll-stack-card {
+  transform-origin: top center;
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  height: 20rem;
+  width: 100%;
+  margin: 30px 0;
+  padding: 3rem;
+  border-radius: 40px;
+  box-sizing: border-box;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  position: relative;
+}
+
+/* Playground overrides — keep React Bits physics, match site look */
+.scroll-stack-card.playground-stack-card {
+  height: 22rem;
+  margin: 0;
+  padding: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+  background: #f7f7f8;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 18px 40px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+}
+
+.playground-scroll-stack .scroll-stack-inner {
+  padding: 8vh 1.25rem 50rem;
+}
+
+@media (min-width: 640px) {
+  .scroll-stack-card.playground-stack-card {
+    height: 24rem;
+    border-radius: 28px;
+  }
+
+  .playground-scroll-stack .scroll-stack-inner {
+    padding: 10vh 1.75rem 50rem;
+  }
+}
+
+.scroll-stack-end {
+  width: 100%;
+  height: 1px;
+}

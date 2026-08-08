@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { X } from "lucide-react";
 import { siteConfig } from "@/lib/data";
 
 export function ResumeModal({
@@ -10,62 +13,88 @@ export function ResumeModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const focusTrapRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", onKey);
-    document.documentElement.classList.add("scroll-locked");
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.documentElement.classList.remove("scroll-locked");
+      document.body.style.overflow = prev;
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) sheetRef.current?.focus();
+  }, [isOpen]);
 
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8"
-      style={{ backgroundColor: "rgba(0,0,0,0.72)", backdropFilter: "blur(8px)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div
-        ref={focusTrapRef}
-        className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-        style={{ height: "min(90svh, 880px)" }}
-      >
-        {/* Header bar */}
-        <div className="flex shrink-0 items-center justify-between border-b border-[#e6e6e6] bg-white px-5 py-3.5">
-          <span className="text-[14px] font-semibold text-gray-700">Resume — Muhammad Taha Madni</span>
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {isOpen ? (
+        <div className="fixed inset-0 z-[200]">
+          <motion.button
+            type="button"
+            aria-label="Close resume"
+            className="absolute inset-0 bg-black/55"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            onClick={onClose}
+          />
+
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close resume"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800"
+            aria-label="Close"
+            className="absolute right-4 top-2.5 z-[210] flex h-9 w-9 items-center justify-center text-white transition-opacity hover:opacity-70 sm:right-6 sm:top-3.5"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            <X className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2.25} />
           </button>
-        </div>
 
-        {/* PDF iframe */}
-        <div className="relative min-h-0 flex-1">
-          <iframe
-            src={`${siteConfig.cv}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-            title="Resume"
-            className="block h-full w-full border-0 bg-white"
-            style={{
-              margin: 0,
-              width: "100%",
-              height: "100%",
-              borderRadius: 0,
-            }}
-          />
+          <motion.div
+            ref={sheetRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Resume"
+            tabIndex={-1}
+            initial={reduceMotion ? false : { y: "100%" }}
+            animate={{ y: 0 }}
+            exit={reduceMotion ? undefined : { y: "100%" }}
+            transition={{ type: "spring", stiffness: 380, damping: 38, mass: 0.9 }}
+            className="absolute inset-x-0 bottom-0 top-12 flex w-full flex-col overflow-hidden rounded-t-[20px] bg-white outline-none sm:top-14 sm:rounded-t-[24px]"
+          >
+            <div className="z-20 flex shrink-0 items-center justify-between border-b border-[#efefef] bg-white px-5 py-3.5 sm:px-8">
+              <p className="text-[15px] font-semibold text-gray-900 sm:text-[16px]">
+                Resume - {siteConfig.fullName}
+              </p>
+              <a
+                href={siteConfig.cv}
+                download
+                className="text-[13px] font-semibold text-[#0071e3] hover:opacity-70"
+              >
+                Download
+              </a>
+            </div>
+            <div className="min-h-0 flex-1">
+              <iframe
+                src={`${siteConfig.cv}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                title="Resume"
+                className="block h-full w-full border-0 bg-white"
+              />
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      ) : null}
+    </AnimatePresence>,
+    document.body
   );
 }

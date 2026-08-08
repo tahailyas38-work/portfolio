@@ -12,6 +12,20 @@ export type CaseStudyItem = {
   image?: string;
 };
 
+function StatusPill({ status }: { status: "Live" | "Designed" }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[13px] font-semibold text-emerald-700">
+      {status === "Live" && (
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        </span>
+      )}
+      {status}
+    </span>
+  );
+}
+
 export function CaseStudyCard({ project }: { project: CaseStudyItem }) {
   return (
     <article className="grid items-center gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16 xl:gap-24">
@@ -23,6 +37,7 @@ export function CaseStudyCard({ project }: { project: CaseStudyItem }) {
           {project.description}
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
+          <StatusPill status={project.status} />
           {project.tags.map((tag) => (
             <TagBadge key={tag} tag={tag} />
           ))}
@@ -30,7 +45,7 @@ export function CaseStudyCard({ project }: { project: CaseStudyItem }) {
         {!project.locked && (
           <Link
             href={`/work#${project.id}`}
-            className="mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            className="mt-9 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             style={{ backgroundColor: "#0071e3" }}
           >
             View Case Study

@@ -208,13 +208,13 @@ export function FeaturedWork() {
     <>
       <NdaModal isOpen={ndaOpen} onClose={() => setNdaOpen(false)} />
 
-      <section id="featured-work" ref={sectionRef}>
+      <section id="products" ref={sectionRef}>
 
         {/* Header */}
         <div className="mx-auto max-w-7xl px-5 pt-16 text-center sm:px-6 lg:px-10 lg:pt-28">
-          <p className="section-label">Selected Work</p>
+          <p className="section-label">Professional Work</p>
           <h2 className="mt-2 text-[1.75rem] font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-4xl lg:text-[52px]">
-            Products and Experiences I&apos;ve Designed
+            Products I&apos;ve Designed
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-[13px] leading-[1.75] text-gray-500 lg:text-[18px]">
             Enterprise platforms, mobile experiences, and products designed to solve real
@@ -260,10 +260,12 @@ export function FeaturedWork() {
                       </p>
                       <div className="mt-3.5 flex flex-wrap gap-2">
                         <StatusPill status={project.status} />
-                        {project.tags.map((tag) => <TagPill key={tag} tag={tag} />)}
+                        {project.tags.map((tag) => (
+                          <TagPill key={tag} tag={tag} />
+                        ))}
                       </div>
 
-                      <div className="mt-5 pt-5">
+                      <div className="mt-9">
                         <button
                           type="button"
                           onClick={() => setNdaOpen(true)}

@@ -7,7 +7,7 @@ import { caseStudies } from "@/lib/data";
 
 export const metadata = {
   title: "Work — Taha",
-  description: "Case studies and side projects by Muhammad Taha Madni.",
+  description: "Case studies and side projects by M. Taha Madni.",
 };
 
 export default function WorkPage() {

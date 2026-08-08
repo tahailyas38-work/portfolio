@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="900" viewBox="0 0 700 900" fill="none">
+  <rect width="700" height="900" rx="28" fill="#1C1917"/>
+  <rect x="40" y="40" width="620" height="820" rx="16" fill="#FAF7F2"/>
+  <rect x="90" y="100" width="200" height="12" rx="6" fill="#D6D3D1"/>
+  <rect x="90" y="160" width="520" height="280" rx="12" fill="#E8F1FF"/>
+  <circle cx="350" cy="300" r="70" fill="#0071E3"/>
+  <path d="M310 300h80M350 260v80" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <rect x="90" y="480" width="520" height="10" rx="5" fill="#E7E5E4"/>
+  <rect x="90" y="510" width="420" height="10" rx="5" fill="#E7E5E4"/>
+  <rect x="90" y="540" width="460" height="10" rx="5" fill="#E7E5E4"/>
+  <rect x="90" y="600" width="220" height="160" rx="12" fill="#FF791B" opacity="0.2"/>
+  <rect x="340" y="600" width="270" height="160" rx="12" fill="#0071E3" opacity="0.15"/>
+  <text x="350" y="820" text-anchor="middle" fill="#A8A29E" font-family="system-ui,sans-serif" font-size="14" font-weight="600" letter-spacing="2">DIARY SERIES</text>
+</svg>

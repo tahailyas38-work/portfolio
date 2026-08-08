@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" fill="none">
+  <rect width="900" height="600" fill="#111827"/>
+  <rect x="40" y="40" width="400" height="520" rx="24" fill="#1F2937"/>
+  <rect x="80" y="90" width="160" height="40" rx="20" fill="#0071E3"/>
+  <rect x="80" y="160" width="300" height="28" rx="8" fill="#374151"/>
+  <rect x="80" y="210" width="240" height="20" rx="6" fill="#4B5563"/>
+  <rect x="80" y="250" width="280" height="20" rx="6" fill="#4B5563"/>
+  <rect x="80" y="340" width="320" height="160" rx="16" fill="#0071E3" opacity="0.25"/>
+  <rect x="480" y="40" width="380" height="250" rx="24" fill="#FF791B"/>
+  <rect x="480" y="320" width="180" height="240" rx="24" fill="#F9FAFB"/>
+  <rect x="680" y="320" width="180" height="240" rx="24" fill="#0071E3"/>
+  <text x="450" y="575" text-anchor="middle" fill="#9CA3AF" font-family="system-ui,sans-serif" font-size="14" font-weight="600" letter-spacing="3">MARKETING CREATIVE</text>
+</svg>
