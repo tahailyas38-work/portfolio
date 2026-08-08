@@ -288,8 +288,7 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
           "speech-update",
           "conversation-update",
         ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any);
+      } as never);
     } catch {
       setToast("Microphone permission is required.");
       resetIdle();
