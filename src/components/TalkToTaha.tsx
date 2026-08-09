@@ -687,48 +687,79 @@ export function TalkToTahaCTA({ className = "" }: { className?: string }) {
   const { status, caption, inCall, startCall, endCall } = useTalk();
   const reduceMotion = useReducedMotion();
   const label = statusCopy(status);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [captionBox, setCaptionBox] = useState<{
+    bottom: number;
+    left: number;
+    width: number;
+  } | null>(null);
 
-  return (
-    <div className={`relative inline-flex flex-col items-center ${className}`}>
-      <AnimatePresence>
-        {inCall && caption ? (
-          <motion.div
-            key="captions"
-            initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? undefined : { opacity: 0, y: 4 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute bottom-full left-1/2 mb-3 w-[min(100vw-2.5rem,300px)] -translate-x-1/2"
+  useEffect(() => {
+    if (!inCall || !caption) {
+      setCaptionBox(null);
+      return;
+    }
+
+    const update = () => {
+      const el = shellRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const width = Math.min(window.innerWidth - 32, 300);
+      setCaptionBox({
+        bottom: window.innerHeight - r.top + 12,
+        left: r.left + r.width / 2,
+        width,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    const id = window.setInterval(update, 250);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+      window.clearInterval(id);
+    };
+  }, [inCall, caption, status]);
+
+  const captionPortal =
+    captionBox && inCall && caption && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            className="pointer-events-none fixed z-[125] select-none"
+            style={{
+              bottom: captionBox.bottom,
+              left: captionBox.left,
+              width: captionBox.width,
+              transform: "translateX(-50%)",
+            }}
             aria-live="polite"
           >
-            <div className="rounded-2xl border border-white/60 bg-white/85 px-3.5 py-3 text-left shadow-[0_12px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl">
+            <div className="rounded-2xl border border-[#e8e8e8] bg-white px-3.5 py-3 text-left shadow-[0_12px_32px_rgba(15,23,42,0.14)]">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
                 Live
               </p>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.p
-                  key={caption}
-                  initial={reduceMotion ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={reduceMotion ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="mt-1 text-[13px] leading-relaxed text-gray-800"
-                >
-                  {caption}
-                </motion.p>
-              </AnimatePresence>
+              {/* No per-token AnimatePresence — streaming captions were double-painting on iOS Chrome */}
+              <p className="mt-1 text-[13px] leading-relaxed text-gray-800">{caption}</p>
             </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+          </div>,
+          document.body
+        )
+      : null;
+
+  return (
+    <div className={`relative inline-flex flex-col items-center ${className}`}>
+      {captionPortal}
 
       <LayoutGroup>
         <motion.div
+          ref={shellRef}
           layout
           transition={spring}
           className={`talk-shell relative overflow-visible rounded-full border ${
             inCall
-              ? `border-white/55 bg-white/85 shadow-[0_10px_32px_rgba(15,23,42,0.12)] ${
+              ? `border-[#e8e8e8] bg-white shadow-[0_10px_32px_rgba(15,23,42,0.12)] ${
                   status === "listening" ? "talk-breathe" : ""
                 }`
               : "cursor-pointer border-[#e6e6e6] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] hover:border-[#d4d4d4] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
