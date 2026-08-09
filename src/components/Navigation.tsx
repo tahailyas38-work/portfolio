@@ -190,7 +190,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
           visible ? "nav-header--visible" : "nav-header"
         }`}
       >
-        <div className="relative z-[1] w-full max-w-3xl">
+        <div className="relative z-[1] flex w-full max-w-3xl justify-center">
           <motion.div
             onPointerEnter={(e) => {
               if (e.pointerType !== "mouse") return;
