@@ -176,14 +176,13 @@ body {
 }
 
 /* ── Navigation (floating pill) ──────────────────────── */
+/* Opacity only — transform would trap position:fixed children (mobile menu backdrop) */
 .nav-header {
   opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.5s ease;
 }
 .nav-header--visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* ── Section label utility ───────────────────────────── */

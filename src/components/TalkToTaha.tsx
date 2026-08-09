@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { LoaderCircle, Mic, Volume2, X } from "lucide-react";
 import Vapi from "@vapi-ai/web";
@@ -140,11 +141,91 @@ function Toast({ message, onDone }: { message: string; onDone: () => void }) {
   );
 }
 
+function MicPermissionSheet({
+  open,
+  busy,
+  hint,
+  onAllow,
+  onClose,
+}: {
+  open: boolean;
+  busy: boolean;
+  hint: string;
+  onAllow: () => void;
+  onClose: () => void;
+}) {
+  if (!open || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[130] flex items-end justify-center p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="mic-perm-title">
+      <button
+        type="button"
+        aria-label="Dismiss"
+        className="absolute inset-0 bg-black/45"
+        onClick={onClose}
+      />
+      <div className="relative z-[1] w-full max-w-sm rounded-[24px] border border-[#e6e6e6] bg-white p-5 shadow-[0_24px_60px_rgba(15,23,42,0.25)]">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0071e3]/10">
+          <Mic className="h-5 w-5 text-[#0071e3]" strokeWidth={2.2} aria-hidden="true" />
+        </div>
+        <h2 id="mic-perm-title" className="mt-4 text-center text-[17px] font-semibold tracking-tight text-[#0a0a0a]">
+          Microphone access needed
+        </h2>
+        <p className="mt-2 text-center text-[13px] leading-relaxed text-gray-500">
+          {hint}
+        </p>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onAllow}
+          className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-[#0071e3] text-[15px] font-semibold text-white transition-opacity disabled:opacity-60"
+        >
+          {busy ? "Waiting for permission…" : "Allow microphone"}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-2 flex h-11 w-full items-center justify-center rounded-full text-[14px] font-medium text-gray-500"
+        >
+          Not now
+        </button>
+        <p className="mt-3 text-center text-[11px] leading-relaxed text-gray-400">
+          If nothing pops up, check your browser site settings and set Microphone to Allow, then try again.
+        </p>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function statusCopy(status: CallStatus) {
   if (status === "listening") return "Listening...";
   if (status === "thinking") return "Thinking...";
   if (status === "speaking") return "Talking...";
   return "Talk to Taha";
+}
+
+async function requestMicrophoneAccess(): Promise<{ ok: true } | { ok: false; reason: "unsupported" | "denied" | "unavailable" }> {
+  if (typeof window === "undefined") return { ok: false, reason: "unsupported" };
+  if (!window.isSecureContext) return { ok: false, reason: "unavailable" };
+  if (!navigator.mediaDevices?.getUserMedia) return { ok: false, reason: "unsupported" };
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+      },
+    });
+    stream.getTracks().forEach((t) => t.stop());
+    return { ok: true };
+  } catch (err) {
+    const name = err && typeof err === "object" && "name" in err ? String((err as { name: string }).name) : "";
+    if (name === "NotAllowedError" || name === "PermissionDeniedError" || name === "SecurityError") {
+      return { ok: false, reason: "denied" };
+    }
+    return { ok: false, reason: "unavailable" };
+  }
 }
 
 export function TalkToTahaProvider({ children }: { children: ReactNode }) {
@@ -153,6 +234,11 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
   const [caption, setCaption] = useState("");
   const [, setVolume] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
+  const [micPromptOpen, setMicPromptOpen] = useState(false);
+  const [micBusy, setMicBusy] = useState(false);
+  const [micHint, setMicHint] = useState(
+    "Talk to Taha needs your mic so you can have a live voice conversation."
+  );
   const activeRef = useRef(false);
 
   const resetIdle = useCallback(() => {
@@ -161,6 +247,39 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     setCaption("");
     setVolume(0);
   }, []);
+
+  const openMicPrompt = useCallback((hint?: string) => {
+    if (hint) setMicHint(hint);
+    setMicPromptOpen(true);
+  }, []);
+
+  const beginVapiCall = useCallback(async () => {
+    const vapi = vapiRef.current;
+    if (!vapi) return false;
+
+    setStatus("listening");
+    setCaption("");
+    activeRef.current = true;
+
+    try {
+      await vapi.start(VAPI_ASSISTANT_ID, {
+        clientMessages: [
+          "transcript",
+          "status-update",
+          "tool-calls",
+          "tool-calls-result",
+          "function-call",
+          "function-call-result",
+          "speech-update",
+          "conversation-update",
+        ],
+      } as never);
+      return true;
+    } catch {
+      resetIdle();
+      return false;
+    }
+  }, [resetIdle]);
 
   useEffect(() => {
     const vapi = new Vapi(VAPI_PUBLIC_KEY);
@@ -223,7 +342,11 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
         text.includes("microphone");
 
       if (permissionDenied) {
-        setToast("Microphone permission is required.");
+        openMicPrompt(
+          "Your browser blocked the microphone. Tap Allow microphone to try again, or enable it in site settings."
+        );
+      } else {
+        setToast("Something went wrong starting the call. Please try again.");
       }
 
       try {
@@ -257,43 +380,55 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
       }
       vapiRef.current = null;
     };
-  }, [resetIdle]);
+  }, [openMicPrompt, resetIdle]);
 
   const startCall = useCallback(async () => {
     if (activeRef.current || status !== "idle") return;
-    const vapi = vapiRef.current;
-    if (!vapi) return;
+    if (!vapiRef.current) return;
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach((t) => t.stop());
-    } catch {
-      setToast("Microphone permission is required.");
+    const permission = await requestMicrophoneAccess();
+    if (!permission.ok) {
+      if (permission.reason === "unsupported") {
+        openMicPrompt("This browser doesn’t support microphone access for voice calls.");
+      } else if (permission.reason === "unavailable") {
+        openMicPrompt("Microphone isn’t available right now. Use HTTPS and try again.");
+      } else {
+        openMicPrompt(
+          "Tap Allow microphone below — your browser should show a permission popup. If it doesn’t, enable Microphone in site settings."
+        );
+      }
       return;
     }
 
-    setStatus("listening");
-    setCaption("");
-    activeRef.current = true;
-
-    try {
-      await vapi.start(VAPI_ASSISTANT_ID, {
-        clientMessages: [
-          "transcript",
-          "status-update",
-          "tool-calls",
-          "tool-calls-result",
-          "function-call",
-          "function-call-result",
-          "speech-update",
-          "conversation-update",
-        ],
-      } as never);
-    } catch {
-      setToast("Microphone permission is required.");
-      resetIdle();
+    setMicPromptOpen(false);
+    const started = await beginVapiCall();
+    if (!started) {
+      openMicPrompt("Couldn’t start the call. Tap Allow microphone to try again.");
     }
-  }, [resetIdle, status]);
+  }, [beginVapiCall, openMicPrompt, status]);
+
+  const allowMicrophone = useCallback(async () => {
+    setMicBusy(true);
+    const permission = await requestMicrophoneAccess();
+    setMicBusy(false);
+
+    if (!permission.ok) {
+      if (permission.reason === "denied") {
+        setMicHint(
+          "Permission is still blocked. In your browser site settings, set Microphone to Allow, then tap Allow microphone again."
+        );
+      } else {
+        setMicHint("Still can’t reach the microphone. Check browser settings and try again.");
+      }
+      return;
+    }
+
+    setMicPromptOpen(false);
+    const started = await beginVapiCall();
+    if (!started) {
+      setToast("Couldn’t start the call. Please try again.");
+    }
+  }, [beginVapiCall]);
 
   const endCall = useCallback(() => {
     try {
@@ -327,6 +462,16 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
           {toast ? <Toast message={toast} onDone={clearToast} /> : null}
         </AnimatePresence>
       </div>
+      <MicPermissionSheet
+        open={micPromptOpen}
+        busy={micBusy}
+        hint={micHint}
+        onAllow={allowMicrophone}
+        onClose={() => {
+          setMicPromptOpen(false);
+          setMicBusy(false);
+        }}
+      />
     </TalkContext.Provider>
   );
 }

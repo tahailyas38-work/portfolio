@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { navLinks } from "@/lib/data";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -34,6 +35,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
   const [scrolledPast, setScrolledPast] = useState(false);
   const [scrollUp, setScrollUp] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const lastY = useRef(0);
   const ticking = useRef(false);
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -61,6 +63,10 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
 
     lastY.current = y;
     ticking.current = false;
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -137,209 +143,224 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
     ? { duration: 0 }
     : { duration: 0.32, ease: softEase };
 
-  return (
-    <header
-      className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-6 sm:pt-5 ${
-        visible ? "nav-header--visible" : "nav-header"
-      }`}
-    >
-      {/* Mobile backdrop — tap outside to dismiss menu */}
-      {mobileOpen ? (
-        <button
-          type="button"
-          aria-label="Dismiss menu"
-          className="pointer-events-auto fixed inset-0 z-0 cursor-default bg-black/25 md:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
-      ) : null}
-
-      <div ref={shellRef} className="relative z-[1] flex w-full max-w-3xl flex-col items-center">
-        <motion.div
-          layout
-          onPointerEnter={(e) => {
-            if (e.pointerType !== "mouse") return;
-            clearLeaveTimer();
-            setHovered(true);
-          }}
-          onPointerLeave={(e) => {
-            // Desktop hover expand only — never auto-close the mobile menu
-            if (e.pointerType !== "mouse") return;
-            clearLeaveTimer();
-            leaveTimer.current = setTimeout(() => {
-              setHovered(false);
-            }, 280);
-          }}
-          transition={{ layout: layoutTween }}
-          className={`pointer-events-auto relative flex h-[48px] items-center overflow-hidden rounded-full border border-[#e6e6e6] bg-white/95 py-1 pl-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:h-[56px] sm:py-1.5 sm:pl-2 ${
-            compact
-              ? "w-[min(100%,220px)] justify-between pr-1.5 sm:w-[240px] sm:pr-2"
-              : "w-full gap-2 pr-1.5 sm:gap-5 sm:pr-4"
-          }`}
-        >
-          <motion.div layout="position" transition={{ layout: layoutTween }} className="shrink-0">
-            <BrandMark onClick={backToTop} />
-          </motion.div>
-
-          {/* Expanded: links + CTA — last flex child when expanded (no phantom siblings) */}
-          <motion.div
-            initial={false}
-            animate={{
-              opacity: expanded ? 1 : 0,
-              maxWidth: expanded ? 720 : 0,
-              flexGrow: expanded ? 1 : 0,
-            }}
-            transition={{
-              maxWidth: layoutTween,
-              flexGrow: layoutTween,
-              opacity: expanded ? fadeIn : fadeOut,
-            }}
-            className="flex min-w-0 items-center justify-end overflow-hidden"
-            style={{ pointerEvents: expanded ? "auto" : "none" }}
-            aria-hidden={!expanded}
-          >
-            <nav className="hidden items-center md:flex">
-              {navLinks.map((link) => {
-                const id = link.href.slice(1);
-                const isActive = activeId === id;
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    tabIndex={expanded ? undefined : -1}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollTo(link.href);
-                    }}
-                    className={`whitespace-nowrap rounded-full px-3.5 py-2 text-[13px] transition-colors sm:px-4 ${
-                      isActive
-                        ? "font-semibold text-[#0a0a0a]"
-                        : "font-medium text-[#6b7280] hover:text-[#0a0a0a]"
-                    }`}
-                  >
-                    {link.label}
-                  </a>
-                );
-              })}
-            </nav>
-
-            {/* Header CTA — desktop only; mobile uses menu CTA to avoid crowding */}
-            <MagneticButton
-              href="#contact"
-              size="lg"
-              tabIndex={expanded ? undefined : -1}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollTo("#contact");
-              }}
-              className="!shadow-sm !hidden shrink-0 md:!inline-flex"
-            >
-              Let&apos;s Connect
-            </MagneticButton>
-
+  const mobileMenu =
+    mounted && mobileOpen
+      ? createPortal(
+          <div className="fixed inset-0 z-[80] md:hidden" role="dialog" aria-modal="true" aria-label="Menu">
             <button
               type="button"
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen}
-              tabIndex={expanded ? undefined : -1}
-              onClick={() => setMobileOpen((o) => !o)}
-              className="ml-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6b7280] transition-colors hover:bg-gray-100 hover:text-[#0a0a0a] md:hidden"
+              aria-label="Dismiss menu"
+              className="absolute inset-0 bg-black/45"
+              onClick={() => setMobileOpen(false)}
+            />
+            <div className="absolute inset-x-4 top-[max(0.75rem,env(safe-area-inset-top))] overflow-hidden rounded-[22px] border border-[#e6e6e6] bg-white shadow-[0_20px_50px_rgba(15,23,42,0.22)]">
+              <div className="flex items-center justify-between gap-3 border-b border-[#eee] px-3 py-2.5">
+                <BrandMark onClick={backToTop} />
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6b7280] transition-colors hover:bg-gray-100 hover:text-[#0a0a0a]"
+                >
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                    <path
+                      d="M5 5L17 17M17 5L5 17"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <ul className="flex flex-col p-2">
+                {navLinks.map((link) => {
+                  const id = link.href.slice(1);
+                  const isActive = activeId === id;
+                  return (
+                    <li key={link.href}>
+                      <a
+                        href={link.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          scrollTo(link.href);
+                        }}
+                        className={`flex min-h-12 items-center rounded-xl px-3.5 text-[15px] transition-colors ${
+                          isActive
+                            ? "bg-gray-100 font-semibold text-[#0a0a0a]"
+                            : "font-medium text-[#6b7280] active:bg-gray-50 active:text-[#0a0a0a]"
+                        }`}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  );
+                })}
+                <li className="mt-1.5 border-t border-[#e6e6e6] px-1.5 pb-1.5 pt-3">
+                  <MagneticButton
+                    href="#contact"
+                    size="lg"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollTo("#contact");
+                    }}
+                    className="w-full justify-center !py-2.5 !text-[14px]"
+                  >
+                    Let&apos;s Connect
+                  </MagneticButton>
+                </li>
+              </ul>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
+  return (
+    <>
+      <header
+        className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-6 sm:pt-5 ${
+          visible ? "nav-header--visible" : "nav-header"
+        }`}
+      >
+        <div
+          ref={shellRef}
+          className={`relative z-[1] flex w-full max-w-3xl flex-col items-center ${
+            mobileOpen ? "invisible md:visible" : ""
+          }`}
+        >
+          <motion.div
+            layout
+            onPointerEnter={(e) => {
+              if (e.pointerType !== "mouse") return;
+              clearLeaveTimer();
+              setHovered(true);
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType !== "mouse") return;
+              clearLeaveTimer();
+              leaveTimer.current = setTimeout(() => {
+                setHovered(false);
+              }, 280);
+            }}
+            transition={{ layout: layoutTween }}
+            className={`pointer-events-auto relative flex h-[48px] items-center overflow-hidden rounded-full border border-[#e6e6e6] bg-white/95 py-1 pl-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:h-[56px] sm:py-1.5 sm:pl-2 ${
+              compact
+                ? "w-[min(100%,220px)] justify-between pr-1.5 sm:w-[240px] sm:pr-2"
+                : "w-full gap-2 pr-1.5 sm:gap-5 sm:pr-4"
+            }`}
+          >
+            <motion.div layout="position" transition={{ layout: layoutTween }} className="shrink-0">
+              <BrandMark onClick={backToTop} />
+            </motion.div>
+
+            <motion.div
+              initial={false}
+              animate={{
+                opacity: expanded ? 1 : 0,
+                maxWidth: expanded ? 720 : 0,
+                flexGrow: expanded ? 1 : 0,
+              }}
+              transition={{
+                maxWidth: layoutTween,
+                flexGrow: layoutTween,
+                opacity: expanded ? fadeIn : fadeOut,
+              }}
+              className="flex min-w-0 items-center justify-end overflow-hidden"
+              style={{ pointerEvents: expanded ? "auto" : "none" }}
+              aria-hidden={!expanded}
             >
-              <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                {mobileOpen ? (
-                  <path
-                    d="M5 5L17 17M17 5L5 17"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                ) : (
+              <nav className="hidden items-center md:flex">
+                {navLinks.map((link) => {
+                  const id = link.href.slice(1);
+                  const isActive = activeId === id;
+                  return (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      tabIndex={expanded ? undefined : -1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollTo(link.href);
+                      }}
+                      className={`whitespace-nowrap rounded-full px-3.5 py-2 text-[13px] transition-colors sm:px-4 ${
+                        isActive
+                          ? "font-semibold text-[#0a0a0a]"
+                          : "font-medium text-[#6b7280] hover:text-[#0a0a0a]"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </nav>
+
+              <MagneticButton
+                href="#contact"
+                size="lg"
+                tabIndex={expanded ? undefined : -1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollTo("#contact");
+                }}
+                className="!shadow-sm !hidden shrink-0 md:!inline-flex"
+              >
+                Let&apos;s Connect
+              </MagneticButton>
+
+              <button
+                type="button"
+                aria-label="Open menu"
+                aria-expanded={mobileOpen}
+                tabIndex={expanded ? undefined : -1}
+                onClick={() => setMobileOpen(true)}
+                className="ml-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6b7280] transition-colors hover:bg-gray-100 hover:text-[#0a0a0a] md:hidden"
+              >
+                <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
                   <path
                     d="M4 7H18M4 11H18M4 15H18"
                     stroke="currentColor"
                     strokeWidth="1.6"
                     strokeLinecap="round"
                   />
-                )}
+                </svg>
+              </button>
+            </motion.div>
+
+            <motion.button
+              type="button"
+              initial={false}
+              animate={{
+                opacity: compact ? 1 : 0,
+                scale: compact ? 1 : 0.92,
+              }}
+              transition={{
+                opacity: compact ? fadeIn : fadeOut,
+                scale: layoutTween,
+              }}
+              aria-label="Open menu"
+              aria-hidden={!compact}
+              tabIndex={compact ? 0 : -1}
+              onClick={() => setMobileOpen(true)}
+              className={
+                compact
+                  ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:h-9 md:w-9"
+                  : "pointer-events-none absolute right-4 top-1/2 h-0 w-0 -translate-y-1/2 overflow-hidden opacity-0"
+              }
+              style={{ pointerEvents: compact ? "auto" : "none" }}
+            >
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                <path
+                  d="M4 7H18M4 11H18M4 15H18"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
               </svg>
-            </button>
+            </motion.button>
           </motion.div>
-
-          {/* Compact hamburger — out of flow when expanded so it can't add right padding */}
-          <motion.button
-            type="button"
-            initial={false}
-            animate={{
-              opacity: compact ? 1 : 0,
-              scale: compact ? 1 : 0.92,
-            }}
-            transition={{
-              opacity: compact ? fadeIn : fadeOut,
-              scale: layoutTween,
-            }}
-            aria-label="Open menu"
-            aria-hidden={!compact}
-            tabIndex={compact ? 0 : -1}
-            onClick={() => setMobileOpen(true)}
-            className={
-              compact
-                ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:h-9 md:w-9"
-                : "pointer-events-none absolute right-4 top-1/2 h-0 w-0 -translate-y-1/2 overflow-hidden opacity-0"
-            }
-            style={{ pointerEvents: compact ? "auto" : "none" }}
-          >
-            <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-              <path
-                d="M4 7H18M4 11H18M4 15H18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-            </svg>
-          </motion.button>
-        </motion.div>
-
-        {mobileOpen && expanded ? (
-          <div className="pointer-events-auto mt-2 w-full overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white/98 p-2 shadow-[0_16px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl md:hidden">
-            <ul className="flex flex-col">
-              {navLinks.map((link) => {
-                const id = link.href.slice(1);
-                const isActive = activeId === id;
-                return (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        scrollTo(link.href);
-                      }}
-                      className={`flex min-h-11 items-center rounded-xl px-3.5 text-[15px] transition-colors ${
-                        isActive
-                          ? "bg-gray-100 font-semibold text-[#0a0a0a]"
-                          : "font-medium text-[#6b7280] active:bg-gray-50 active:text-[#0a0a0a]"
-                      }`}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                );
-              })}
-              <li className="mt-1.5 border-t border-[#e6e6e6] px-1.5 pb-1 pt-3">
-                <MagneticButton
-                  href="#contact"
-                  size="lg"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollTo("#contact");
-                  }}
-                  className="w-full justify-center !py-2.5 !text-[14px]"
-                >
-                  Let&apos;s Connect
-                </MagneticButton>
-              </li>
-            </ul>
-          </div>
-        ) : null}
-      </div>
-    </header>
+        </div>
+      </header>
+      {mobileMenu}
+    </>
   );
 }
