@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useCountUp } from "@/hooks/useCountUp";
 import { siteConfig } from "@/lib/data";
 import { ResumeModal } from "@/components/ResumeModal";
@@ -71,131 +71,58 @@ function GlassCard({
   flipDone: boolean;
   onOpenResume: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [pressed, setPressed] = useState(false);
-  const [glowPos, setGlowPos] = useState({ x: 50, y: 50 });
-  const [hovered, setHovered] = useState(false);
-
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (pressed || !flipDone) return;
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    setTilt({ x: (0.5 - y) * 16, y: (x - 0.5) * 16 });
-    setGlowPos({ x: x * 100, y: y * 100 });
-  }, [pressed, flipDone]);
-
-  const onPointerLeave = useCallback(() => {
-    if (pressed) return;
-    setTilt({ x: 0, y: 0 });
-    setHovered(false);
-  }, [pressed]);
-
-  const onPointerEnter = useCallback(() => { if (flipDone) setHovered(true); }, [flipDone]);
-
-  const onPointerDown = useCallback(() => {
-    if (!flipDone) return;
-    setPressed(true);
-    setTilt({ x: 3, y: 0 });
-  }, [flipDone]);
-
-  const onPointerUp = useCallback(() => {
-    setPressed(false);
-    setTilt({ x: 0, y: 0 });
-  }, []);
-
   const scrollToContact = (e: React.MouseEvent) => {
     e.stopPropagation();
     document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const scale = pressed ? 0.96 : hovered ? 1.015 : 1;
-  const tz = pressed ? "-12px" : "0px";
-
-  const tiltTransform = flipDone
-    ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${scale}) translateZ(${tz})`
-    : undefined;
-
-  const tiltTransition = pressed
-    ? "transform 0.12s cubic-bezier(0.34,1.56,0.64,1)"
-    : "transform 0.35s cubic-bezier(0.22,1,0.36,1)";
-
   return (
-    <div className="relative" style={{ perspective: "1000px" }}>
+    <div className="relative">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-6 -bottom-8 rounded-[2.5rem] opacity-70 blur-3xl transition-all duration-500"
+        className="pointer-events-none absolute -inset-6 -bottom-8 rounded-[2.5rem] opacity-70 blur-3xl"
         style={{
-          background: `radial-gradient(ellipse 70% 40% at ${glowPos.x}% 110%, rgba(0,113,227,0.20), transparent 65%)`,
+          background:
+            "radial-gradient(ellipse 70% 40% at 50% 110%, rgba(0,113,227,0.20), transparent 65%)",
         }}
       />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-300"
-        style={{
-          opacity: hovered ? 0.5 : 0,
-          background: `radial-gradient(ellipse 60% 50% at ${glowPos.x}% ${glowPos.y}%, rgba(120,180,255,0.15) 0%, rgba(180,100,255,0.06) 40%, transparent 65%)`,
-          mixBlendMode: "screen",
-        }}
-      />
-
-      <div
-        className={flipDone ? "" : "card-flip-enter"}
-        style={{
-          transform: tiltTransform,
-          transition: flipDone ? tiltTransition : undefined,
-          transformStyle: "preserve-3d",
-        }}
-      >
+      <div className={flipDone ? "" : "card-flip-enter"}>
         <div
-          ref={cardRef}
-          onPointerMove={onPointerMove}
-          onPointerLeave={onPointerLeave}
-          onPointerEnter={onPointerEnter}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          className="relative cursor-grab overflow-hidden rounded-3xl active:cursor-grabbing"
+          className="relative overflow-hidden rounded-3xl"
           style={{
             background: "rgba(255,255,255,0.88)",
             backdropFilter: "blur(24px) saturate(1.5)",
             WebkitBackdropFilter: "blur(24px) saturate(1.5)",
             border: "1px solid rgba(255,255,255,0.9)",
-            boxShadow: hovered
-              ? "0 28px 56px rgba(0,113,227,0.10), 0 6px 20px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)"
-              : "0 8px 32px rgba(0,113,227,0.06), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)",
+            boxShadow:
+              "0 8px 32px rgba(0,113,227,0.06), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)",
           }}
         >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-px"
-            style={{ background: "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.95) 50%, transparent 90%)" }}
-          />
-
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-300"
             style={{
-              opacity: hovered ? 1 : 0,
-              background: `radial-gradient(ellipse 55% 45% at ${glowPos.x}% ${glowPos.y}%, rgba(255,255,255,0.22), transparent 70%)`,
+              background:
+                "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.95) 50%, transparent 90%)",
             }}
           />
 
           <div
             className="relative flex items-center gap-4 overflow-hidden p-6"
-            style={{ background: "linear-gradient(135deg, rgba(0,113,227,0.10) 0%, rgba(0,113,227,0.05) 100%)" }}
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(0,113,227,0.10) 0%, rgba(0,113,227,0.05) 100%)",
+            }}
           >
             <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#0071e3]/[0.08]" />
-            <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ececee] ring-2 ring-white shadow-md">
+            <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ececee] shadow-md ring-2 ring-white">
               <AvatarImage variant="mark" alt="Taha" className="h-[92%] w-[92%]" />
             </span>
             <div className="relative min-w-0">
               <p className="text-[20px] font-bold leading-tight text-gray-900">M. Taha Madni</p>
               <p className="mt-1.5 text-[12px] font-medium leading-snug text-gray-400 sm:text-[13px]">
-                Creative Product Design | Entrepreneur
+                Creative Designer | Entrepreneur
               </p>
             </div>
           </div>
@@ -203,7 +130,9 @@ function GlassCard({
           <div className="grid grid-cols-2 gap-px bg-[#e6e6e6]">
             {stats.map((s) => (
               <div key={s.label} className="bg-white px-4 py-6 sm:px-6 sm:py-8">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">{s.label}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                  {s.label}
+                </p>
                 <StatValue value={s.value} active={statsActive} />
               </div>
             ))}

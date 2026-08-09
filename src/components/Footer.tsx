@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import {
   siteConfig,
   footerPageLinks,
 } from "@/lib/data";
 import ParticleText from "@/components/ParticleText";
+import { ResumeModal } from "@/components/ResumeModal";
 
 const stickers = [
   { text: "PRODUCT DESIGN", bg: "#0071e3", color: "#fff", rotate: "-3deg", top: "22%", left: "6%" },
@@ -39,7 +41,28 @@ function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
+function ResumeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+      <path d="M14 2v6h6" />
+      <path d="M8 13h8M8 17h5" />
+    </svg>
+  );
+}
+
+function EmailIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" />
+      <path d="M4 7l8 6 8-6" />
+    </svg>
+  );
+}
+
 export function Footer() {
+  const [resumeOpen, setResumeOpen] = useState(false);
+
   const scrollTo = (href: string) => {
     if (href.startsWith("#")) {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
@@ -51,7 +74,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="pb-8 pt-16 lg:pb-10 lg:pt-20">
           {/* Brand + nav */}
-          <div className="flex items-start justify-between gap-8">
+          <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 max-w-2xl space-y-5">
               <button
                 type="button"
@@ -83,23 +106,43 @@ export function Footer() {
               </nav>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2.5 pt-0.5">
-              <a
-                href={siteConfig.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className={iconBtn}
-              >
-                <LinkedInIcon className="h-4 w-4" />
-              </a>
-              <span
-                aria-label="Instagram (coming soon)"
-                title="Coming soon"
-                className={`${iconBtn} cursor-default hover:border-white/15 hover:text-white/50`}
-              >
-                <InstagramIcon className="h-4 w-4" />
-              </span>
+            <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end sm:pt-0.5">
+              <p className="max-w-[220px] text-[13px] leading-snug text-white/40 sm:text-right">
+                Open to collaborations, conversations, and new opportunities.
+              </p>
+              <div className="flex items-center gap-2.5">
+                <a
+                  href={siteConfig.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className={iconBtn}
+                >
+                  <LinkedInIcon className="h-4 w-4" />
+                </a>
+                <span
+                  aria-label="Instagram (coming soon)"
+                  title="Coming soon"
+                  className={`${iconBtn} cursor-default hover:border-white/15 hover:text-white/50`}
+                >
+                  <InstagramIcon className="h-4 w-4" />
+                </span>
+                <button
+                  type="button"
+                  aria-label="Resume"
+                  className={iconBtn}
+                  onClick={() => setResumeOpen(true)}
+                >
+                  <ResumeIcon className="h-4 w-4" />
+                </button>
+                <a
+                  href={`mailto:${siteConfig.email}`}
+                  aria-label="Email"
+                  className={iconBtn}
+                >
+                  <EmailIcon className="h-4 w-4" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -186,6 +229,8 @@ export function Footer() {
           </p>
         </div>
       </div>
+
+      <ResumeModal isOpen={resumeOpen} onClose={() => setResumeOpen(false)} />
     </footer>
   );
 }
