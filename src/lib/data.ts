@@ -1,12 +1,12 @@
 export const siteConfig = {
   name: "M. Taha Madni",
   fullName: "Muhammad Taha Madni",
-  title: "Taha — Product Designer",
+  title: "Taha | Product Designer",
   role: "Product Designer | Entrepreneur | Creative Strategist",
   description:
     "Product designer, entrepreneur, and creative strategist turning complexity into clarity across enterprise, consumer, and AI products.",
   footerBlurb:
-    "Product designer, entrepreneur, and creative strategist — turning complexity into clarity.",
+    "Product designer, entrepreneur, and creative strategist, turning complexity into clarity.",
   email: "tahailyas38@gmail.com",
   linkedin: "https://www.linkedin.com/in/muhammad-taha-madni-996a841b2",
   instagram: "https://www.instagram.com/",
@@ -496,7 +496,7 @@ export const designPrinciples = [
   },
   {
     title: "Systems before screens",
-    description: "Scalable patterns first — screens are expressions of the system.",
+    description: "Scalable patterns first. Screens are expressions of the system.",
     icon: "⬡",
   },
   {

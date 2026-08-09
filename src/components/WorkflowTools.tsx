@@ -32,7 +32,7 @@ export function WorkflowTools() {
           How I work today
         </h2>
         <p className="mt-4 max-w-xl text-[15px] leading-[1.75] text-gray-500">
-          A connected stack — each tool feeds the next in my design-to-ship process.
+          A connected stack, where each tool feeds the next in my design-to-ship process.
         </p>
 
         {/* Flow diagram */}
@@ -89,7 +89,7 @@ export function WorkflowTools() {
         <div className="mt-10 rounded-2xl border border-[#e6e6e6] bg-[#f5f9ff]/50 px-6 py-5 text-center transition-all duration-500">
           <p className="text-[14px] text-gray-500">
             <span className="font-semibold text-gray-900">{workflowTools[activeFlow].name}</span>
-            {" — "}
+            {": "}
             {workflowTools[activeFlow].role}
           </p>
         </div>

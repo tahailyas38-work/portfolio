@@ -293,7 +293,7 @@ export function About() {
             style={{ opacity: 0, transform: "translateY(20px)", transition: "opacity 0.5s ease 0.08s, transform 0.5s ease 0.08s" }}
           >
             <p>
-              I enjoy figuring out the things that don&apos;t make sense yet — the{" "}
+              I enjoy figuring out the things that don&apos;t make sense yet, the{" "}
               <Bold>messy workflows, complicated systems, and half-formed ideas</Bold> that
               need to become something people can actually use.
             </p>
@@ -302,11 +302,11 @@ export function About() {
               <Bold>enterprise, consumer, and AI products</Bold>, bringing together{" "}
               <Bold>systems thinking, visual craft, and curiosity</Bold> to make technology
               feel simpler. Beyond product design, I&apos;ve explored{" "}
-              <Bold>branding, marketing, advertising, and entrepreneurship</Bold> — and{" "}
+              <Bold>branding, marketing, advertising, and entrepreneurship</Bold>, and{" "}
               <Bold>launched two businesses of my own</Bold>, with three more in the works.
             </p>
             <p>
-              That work taught me to look past the interface — to{" "}
+              That work taught me to look past the interface, to{" "}
               <Bold>products, brands, people, and the bigger story</Bold>. I move between
               strategy and execution: untangling systems, shaping brands, and turning ideas
               into something real.

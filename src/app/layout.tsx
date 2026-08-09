@@ -33,7 +33,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Taha — Product Designer",
+  title: "Taha | Product Designer",
   description:
     "Product designer, entrepreneur, and creative strategist turning complexity into clarity across enterprise, consumer, and AI products.",
   icons: {

@@ -6,7 +6,7 @@ import { SideProjects } from "@/components/SideProjects";
 import { caseStudies } from "@/lib/data";
 
 export const metadata = {
-  title: "Work — Taha",
+  title: "Work | Taha",
   description: "Case studies and side projects by M. Taha Madni.",
 };
 

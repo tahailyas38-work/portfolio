@@ -52,7 +52,7 @@ export function DesignPrinciples() {
           How I think about design
         </h2>
         <p className="mt-4 max-w-xl text-[15px] leading-[1.75] text-gray-500">
-          Core beliefs that guide every project — from enterprise CRMs to consumer products.
+          Core beliefs that guide every project, from enterprise CRMs to consumer products.
         </p>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

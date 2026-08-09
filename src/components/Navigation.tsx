@@ -249,7 +249,12 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
             <div
               className={`flex h-12 items-center pl-1.5 pr-1.5 sm:h-14 sm:pl-2 ${
                 mobileOpen ? "border-b border-[#eee]" : ""
-              } ${shellCompact ? "justify-between sm:pr-2" : "justify-between gap-2 sm:gap-5 sm:pr-4"}`}
+              } ${
+                shellCompact
+                  ? "justify-between sm:pr-2"
+                  : // Desktop expanded: equal inset around CTA (top/bottom/right). No flex gap after CTA.
+                    "justify-between gap-2 sm:gap-5 md:pr-[11px]"
+              }`}
             >
               <div className="shrink-0">
                 <BrandMark onClick={backToTop} />
@@ -322,7 +327,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
                 <MenuIcon open={mobileOpen} />
               </button>
 
-              {/* Desktop compact hamburger — stay in flow; animate width/opacity instead of remounting */}
+              {/* Desktop compact hamburger — out of flow when expanded so it can't steal gap after the CTA */}
               <motion.button
                 type="button"
                 initial={false}
@@ -330,7 +335,6 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
                   opacity: shellCompact ? 1 : 0,
                   scale: shellCompact ? 1 : 0.92,
                   width: shellCompact ? 36 : 0,
-                  marginLeft: shellCompact ? 0 : 0,
                 }}
                 transition={{
                   opacity: shellCompact ? fadeIn : fadeOut,
@@ -341,7 +345,11 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
                 aria-hidden={!shellCompact}
                 tabIndex={shellCompact ? 0 : -1}
                 onClick={() => setHovered(true)}
-                className="hidden h-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:flex"
+                className={
+                  shellCompact
+                    ? "hidden h-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:flex"
+                    : "pointer-events-none absolute right-2 top-1/2 hidden h-0 w-0 -translate-y-1/2 overflow-hidden opacity-0 md:block"
+                }
                 style={{ pointerEvents: shellCompact ? "auto" : "none" }}
               >
                 <MenuIcon open={false} />

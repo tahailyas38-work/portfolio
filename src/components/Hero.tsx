@@ -204,7 +204,7 @@ export function Hero({
           />
         </div>
 
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-8 pt-[88px] sm:pt-[88px] lg:px-10 lg:pb-10 lg:pt-[96px]">
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-8 pt-[68px] sm:pt-[68px] lg:px-10 lg:pb-10 lg:pt-[76px]">
           <div className="relative mx-auto flex w-full flex-col items-center sm:-translate-y-[min(3vh,1.75rem)]">
             {/* Type + face lockup — stacked on mobile, overlapping on sm+ */}
             <div className="relative flex w-full flex-col items-center">

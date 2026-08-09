@@ -106,10 +106,8 @@ export function Footer() {
               </nav>
             </div>
 
-            <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end sm:pt-0.5">
-              <p className="max-w-[220px] text-[13px] leading-snug text-white/40 sm:text-right">
-                Open to collaborations, conversations, and new opportunities.
-              </p>
+            <div className="flex shrink-0 items-center gap-3 sm:pt-0.5">
+              <p className="text-[13px] font-medium tracking-wide text-white/50">Socials</p>
               <div className="flex items-center gap-2.5">
                 <a
                   href={siteConfig.linkedin}
