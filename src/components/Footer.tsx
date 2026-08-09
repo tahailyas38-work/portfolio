@@ -70,7 +70,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="overflow-hidden bg-[#0a0a0a]">
+    <footer id="footer" className="overflow-hidden bg-[#0a0a0a]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="pb-8 pt-16 lg:pb-10 lg:pt-20">
           {/* Brand + nav */}
