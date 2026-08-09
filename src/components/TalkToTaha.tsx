@@ -151,46 +151,64 @@ function MicPermissionSheet({
   open: boolean;
   busy: boolean;
   hint: string;
-  onAllow: () => void;
+  onAllow: () => void | Promise<void>;
   onClose: () => void;
 }) {
   if (!open || typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[130] flex items-end justify-center p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="mic-perm-title">
-      <button
-        type="button"
-        aria-label="Dismiss"
+    <div
+      className="fixed inset-0 z-[130] flex items-end justify-center p-4 sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mic-perm-title"
+    >
+      {/* Backdrop — behind the sheet, not a full-screen <button> over content */}
+      <div
         className="absolute inset-0 bg-black/45"
+        aria-hidden="true"
         onClick={onClose}
       />
-      <div className="relative z-[1] w-full max-w-sm rounded-[24px] border border-[#e6e6e6] bg-white p-5 shadow-[0_24px_60px_rgba(15,23,42,0.25)]">
+      <div
+        className="relative z-10 w-full max-w-sm rounded-[24px] border border-[#e6e6e6] bg-white p-5 shadow-[0_24px_60px_rgba(15,23,42,0.25)]"
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0071e3]/10">
           <Mic className="h-5 w-5 text-[#0071e3]" strokeWidth={2.2} aria-hidden="true" />
         </div>
-        <h2 id="mic-perm-title" className="mt-4 text-center text-[17px] font-semibold tracking-tight text-[#0a0a0a]">
+        <h2
+          id="mic-perm-title"
+          className="mt-4 text-center text-[17px] font-semibold tracking-tight text-[#0a0a0a]"
+        >
           Microphone access needed
         </h2>
-        <p className="mt-2 text-center text-[13px] leading-relaxed text-gray-500">
-          {hint}
-        </p>
+        <p className="mt-2 text-center text-[13px] leading-relaxed text-gray-500">{hint}</p>
         <button
           type="button"
           disabled={busy}
-          onClick={onAllow}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            void onAllow();
+          }}
           className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-[#0071e3] text-[15px] font-semibold text-white transition-opacity disabled:opacity-60"
         >
           {busy ? "Waiting for permission…" : "Allow microphone"}
         </button>
         <button
           type="button"
-          onClick={onClose}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
           className="mt-2 flex h-11 w-full items-center justify-center rounded-full text-[14px] font-medium text-gray-500"
         >
           Not now
         </button>
         <p className="mt-3 text-center text-[11px] leading-relaxed text-gray-400">
-          If nothing pops up, check your browser site settings and set Microphone to Allow, then try again.
+          On iPhone: tap aA in the address bar → Website Settings → Microphone → Allow, then try again.
         </p>
       </div>
     </div>,
@@ -205,27 +223,128 @@ function statusCopy(status: CallStatus) {
   return "Talk to Taha";
 }
 
-async function requestMicrophoneAccess(): Promise<{ ok: true } | { ok: false; reason: "unsupported" | "denied" | "unavailable" }> {
-  if (typeof window === "undefined") return { ok: false, reason: "unsupported" };
-  if (!window.isSecureContext) return { ok: false, reason: "unavailable" };
-  if (!navigator.mediaDevices?.getUserMedia) return { ok: false, reason: "unsupported" };
+function isIOSDevice() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/.test(ua)) return true;
+  // iPadOS desktop UA
+  return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+
+/** iOS Safari needs AudioContext unlock + play-and-record session before WebRTC. */
+async function unlockIOSAudio() {
+  try {
+    const AC =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    if (ctx.state === "suspended") await ctx.resume();
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+    window.setTimeout(() => {
+      void ctx.close().catch(() => {});
+    }, 500);
+  } catch {
+    /* ignore */
+  }
 
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-      },
-    });
-    stream.getTracks().forEach((t) => t.stop());
-    return { ok: true };
-  } catch (err) {
-    const name = err && typeof err === "object" && "name" in err ? String((err as { name: string }).name) : "";
-    if (name === "NotAllowedError" || name === "PermissionDeniedError" || name === "SecurityError") {
-      return { ok: false, reason: "denied" };
-    }
-    return { ok: false, reason: "unavailable" };
+    const audio = new Audio(
+      "data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//////////////////////////////////////////////////////////////////8AAAA8AAAACadrbW0AAAApAAAAAExBTUUzLjk4LjIAAAAAAAAAAAAAAAD/4QAYZAAAAAADSAAAAAAADSAAAAAA"
+    );
+    audio.setAttribute("playsinline", "true");
+    audio.muted = true;
+    await audio.play();
+    audio.pause();
+  } catch {
+    /* ignore */
   }
+}
+
+function setIOSAudioSession(
+  type: "auto" | "playback" | "play-and-record" | "transient" | "transient-solo"
+) {
+  try {
+    const session = (
+      navigator as Navigator & {
+        audioSession?: { type: string };
+      }
+    ).audioSession;
+    if (session) session.type = type;
+  } catch {
+    /* ignore */
+  }
+}
+
+async function requestMicrophoneAccess(): Promise<
+  | { ok: true; stream: MediaStream }
+  | { ok: false; reason: "unsupported" | "denied" | "unavailable"; detail?: string }
+> {
+  if (typeof window === "undefined") return { ok: false, reason: "unsupported" };
+  if (!window.isSecureContext) {
+    return { ok: false, reason: "unavailable", detail: "Needs a secure (HTTPS) connection." };
+  }
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return { ok: false, reason: "unsupported", detail: "This browser can’t access the microphone." };
+  }
+
+  try {
+    // getUserMedia must be first in the tap chain on iPhone — don't await unlock before it.
+    const stream = await Promise.race([
+      navigator.mediaDevices.getUserMedia({ audio: true }),
+      new Promise<never>((_, reject) => {
+        window.setTimeout(
+          () => reject(Object.assign(new Error("Permission timed out"), { name: "TimeoutError" })),
+          15000
+        );
+      }),
+    ]);
+
+    if (isIOSDevice()) {
+      setIOSAudioSession("play-and-record");
+      // Fire-and-forget unlock after mic is granted (playback for assistant audio).
+      void unlockIOSAudio();
+    }
+
+    return { ok: true, stream };
+  } catch (err) {
+    const name =
+      err && typeof err === "object" && "name" in err ? String((err as { name: string }).name) : "";
+    const message =
+      err && typeof err === "object" && "message" in err
+        ? String((err as { message: string }).message)
+        : String(err ?? "");
+
+    if (
+      name === "NotAllowedError" ||
+      name === "PermissionDeniedError" ||
+      name === "SecurityError"
+    ) {
+      return { ok: false, reason: "denied", detail: message };
+    }
+    if (name === "TimeoutError" || message.toLowerCase().includes("timed out")) {
+      return {
+        ok: false,
+        reason: "unavailable",
+        detail: "The permission prompt timed out. Try again.",
+      };
+    }
+    return { ok: false, reason: "unavailable", detail: message || name };
+  }
+}
+
+function releaseStream(stream?: MediaStream | null) {
+  stream?.getTracks().forEach((t) => {
+    try {
+      t.stop();
+    } catch {
+      /* ignore */
+    }
+  });
 }
 
 export function TalkToTahaProvider({ children }: { children: ReactNode }) {
@@ -275,11 +394,29 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
         ],
       } as never);
       return true;
-    } catch {
+    } catch (err) {
+      console.warn("[TalkToTaha] vapi.start failed:", err);
       resetIdle();
       return false;
     }
   }, [resetIdle]);
+
+  /** Mic unlock first in the same tap, then Vapi — required for iPhone Safari. */
+  const startCallWithMic = useCallback(async (): Promise<"started" | "denied" | "failed"> => {
+    const permission = await requestMicrophoneAccess();
+    if (!permission.ok) {
+      return permission.reason === "denied" ? "denied" : "failed";
+    }
+
+    const warmup = permission.stream;
+    try {
+      const started = await beginVapiCall();
+      return started ? "started" : "failed";
+    } finally {
+      // Keep warmup tracks briefly so iOS doesn't drop the permission session.
+      window.setTimeout(() => releaseStream(warmup), 1500);
+    }
+  }, [beginVapiCall]);
 
   useEffect(() => {
     const vapi = new Vapi(VAPI_PUBLIC_KEY);
@@ -288,9 +425,15 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     const onCallStart = () => {
       activeRef.current = true;
       setStatus("listening");
+      setMicPromptOpen(false);
+      setMicBusy(false);
     };
 
     const onCallEnd = () => {
+      if (isIOSDevice()) {
+        setIOSAudioSession("playback");
+        setIOSAudioSession("auto");
+      }
       resetIdle();
     };
 
@@ -335,15 +478,20 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
           : err ?? ""
       ).toLowerCase();
 
+      console.warn("[TalkToTaha] vapi error:", err);
+
       const permissionDenied =
         text.includes("permission") ||
         text.includes("not-allowed") ||
         text.includes("denied") ||
-        text.includes("microphone");
+        text.includes("microphone") ||
+        text.includes("getusermedia");
 
       if (permissionDenied) {
         openMicPrompt(
-          "Your browser blocked the microphone. Tap Allow microphone to try again, or enable it in site settings."
+          isIOSDevice()
+            ? "iPhone blocked the mic. Tap Allow microphone, or: aA → Website Settings → Microphone → Allow."
+            : "Microphone is blocked for this site. Tap Allow microphone to try again."
         );
       } else {
         setToast("Something went wrong starting the call. Please try again.");
@@ -353,6 +501,10 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
         vapi.stop();
       } catch {
         /* ignore */
+      }
+      if (isIOSDevice()) {
+        setIOSAudioSession("playback");
+        setIOSAudioSession("auto");
       }
       resetIdle();
     };
@@ -386,55 +538,61 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     if (activeRef.current || status !== "idle") return;
     if (!vapiRef.current) return;
 
-    const permission = await requestMicrophoneAccess();
-    if (!permission.ok) {
-      if (permission.reason === "unsupported") {
-        openMicPrompt("This browser doesn’t support microphone access for voice calls.");
-      } else if (permission.reason === "unavailable") {
-        openMicPrompt("Microphone isn’t available right now. Use HTTPS and try again.");
-      } else {
-        openMicPrompt(
-          "Tap Allow microphone below — your browser should show a permission popup. If it doesn’t, enable Microphone in site settings."
-        );
-      }
+    const result = await startCallWithMic();
+    if (result === "started") {
+      setMicPromptOpen(false);
       return;
     }
 
-    setMicPromptOpen(false);
-    const started = await beginVapiCall();
-    if (!started) {
-      openMicPrompt("Couldn’t start the call. Tap Allow microphone to try again.");
+    if (result === "denied") {
+      openMicPrompt(
+        isIOSDevice()
+          ? "Microphone permission was denied. Tap Allow microphone, or enable it under aA → Website Settings → Microphone."
+          : "Microphone permission was denied. Tap Allow microphone to try again."
+      );
+      return;
     }
-  }, [beginVapiCall, openMicPrompt, status]);
+
+    openMicPrompt(
+      isIOSDevice()
+        ? "Couldn’t start on iPhone. Tap Allow microphone — Safari should ask for access."
+        : "Couldn’t start the call. Tap Allow microphone to try again."
+    );
+  }, [openMicPrompt, startCallWithMic, status]);
 
   const allowMicrophone = useCallback(async () => {
     setMicBusy(true);
-    const permission = await requestMicrophoneAccess();
-    setMicBusy(false);
-
-    if (!permission.ok) {
-      if (permission.reason === "denied") {
-        setMicHint(
-          "Permission is still blocked. In your browser site settings, set Microphone to Allow, then tap Allow microphone again."
-        );
-      } else {
-        setMicHint("Still can’t reach the microphone. Check browser settings and try again.");
+    try {
+      const result = await startCallWithMic();
+      if (result === "started") {
+        setMicPromptOpen(false);
+        return;
       }
-      return;
+      if (result === "denied") {
+        setMicHint(
+          isIOSDevice()
+            ? "Still blocked on iPhone. Open Safari website settings (aA) → Microphone → Allow, then tap Allow microphone again."
+            : "Still blocked. Enable Microphone in site settings, then try again."
+        );
+        return;
+      }
+      setMicHint(
+        "Still couldn’t start the call. Close this, tap Talk to Taha again, and allow the mic when Safari asks."
+      );
+    } finally {
+      setMicBusy(false);
     }
-
-    setMicPromptOpen(false);
-    const started = await beginVapiCall();
-    if (!started) {
-      setToast("Couldn’t start the call. Please try again.");
-    }
-  }, [beginVapiCall]);
+  }, [startCallWithMic]);
 
   const endCall = useCallback(() => {
     try {
       vapiRef.current?.stop();
     } catch {
       /* ignore */
+    }
+    if (isIOSDevice()) {
+      setIOSAudioSession("playback");
+      setIOSAudioSession("auto");
     }
     resetIdle();
   }, [resetIdle]);
