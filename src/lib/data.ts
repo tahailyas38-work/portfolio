@@ -545,6 +545,7 @@ export const tools = [
   { name: "Miro", icon: "/tools/miro.png", size: 52 },
   { name: "Claude", icon: "/tools/claude.png", size: 52 },
   { name: "Cursor", icon: "/tools/cursor.png", size: 52 },
+  { name: "Vapi", icon: "/tools/vapi.svg", size: 52 },
   { name: "Adobe", icon: "/tools/adobe.png", size: 52 },
   { name: "Illustrator", icon: "/tools/illustrator.png", size: 52 },
   { name: "Photoshop", icon: "/tools/photoshop.png", size: 52 },

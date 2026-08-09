@@ -30,10 +30,10 @@ function ToolIcon({
     >
       {hovered && (
         <div className="absolute bottom-full left-1/2 z-10 mb-3 -translate-x-1/2">
-          <div className="whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-[12px] font-medium text-background shadow-lg">
+          <div className="whitespace-nowrap rounded-lg bg-[#0a0a0a] px-3 py-1.5 text-[12px] font-medium text-white shadow-lg">
             {name}
           </div>
-          <div className="mx-auto mt-0.5 h-0 w-0 border-x-4 border-x-transparent border-t-4 border-t-foreground" />
+          <div className="mx-auto mt-0.5 h-0 w-0 border-x-4 border-x-transparent border-t-4 border-t-[#0a0a0a]" />
         </div>
       )}
 
@@ -58,7 +58,6 @@ export function ToolsMarquee() {
 
   return (
     <section id="workflow-tools" className="relative overflow-hidden pb-32 pt-16 lg:pb-40 lg:pt-20">
-
       <p className="relative z-[1] mb-16 text-center text-[13px] font-medium text-muted lg:mb-20 lg:text-sm">
         Design &amp; Development Tools
       </p>
@@ -70,7 +69,7 @@ export function ToolsMarquee() {
               key={`${tool.name}-${index}`}
               name={tool.name}
               icon={tool.icon}
-              size={ICON_SIZE}
+              size={tool.name === "Vapi" ? ICON_SIZE * 0.85 : ICON_SIZE}
               delay={index * 0.22}
             />
           ))}
