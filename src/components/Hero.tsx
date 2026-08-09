@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { MagneticButton } from "@/components/MagneticButton";
 import { TalkToTahaCTA } from "@/components/TalkToTaha";
+import { AvatarImage } from "@/components/AvatarImage";
 import { HeroClientBar } from "@/components/HeroClientBar";
 import StrokeText from "@/components/StrokeText";
 
@@ -286,12 +287,11 @@ export function Hero({
                   onMouseMove={onFaceMove}
                   className="hero-face-float pointer-events-auto relative mx-auto h-[min(78vw,300px)] w-[min(64vw,250px)] sm:h-[380px] sm:w-[300px] lg:h-[450px] lg:w-[350px] xl:h-[500px] xl:w-[390px]"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/Avatar.png"
+                  <AvatarImage
+                    variant="hero"
                     alt="Taha Madni"
-                    draggable={false}
-                    className="hero-face-bust pointer-events-none absolute inset-0 h-full w-full select-none object-contain object-center"
+                    priority
+                    className="hero-face-bust pointer-events-none absolute inset-0 select-none"
                   />
                 </div>
               </div>

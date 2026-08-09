@@ -12,6 +12,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { designStudies } from "@/lib/data";
 import { MagneticButton } from "@/components/MagneticButton";
+import { AvatarImage } from "@/components/AvatarImage";
 
 type Study = (typeof designStudies)[number];
 
@@ -143,12 +144,7 @@ function StudySheet({ study, onClose }: { study: Study; onClose: () => void }) {
               <div className="mb-6 flex w-full items-center gap-8 sm:mb-8 sm:gap-10">
                 <span className="h-px min-w-0 flex-1 bg-[#e5e5e5]" aria-hidden="true" />
                 <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ececee] sm:h-20 sm:w-20">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/Avatar.png"
-                    alt=""
-                    className="h-[88%] w-[88%] object-contain object-center"
-                  />
+                  <AvatarImage variant="mark" className="h-[88%] w-[88%]" />
                 </div>
                 <span className="h-px min-w-0 flex-1 bg-[#e5e5e5]" aria-hidden="true" />
               </div>

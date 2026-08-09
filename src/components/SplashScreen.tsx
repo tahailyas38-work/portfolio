@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AvatarImage } from "@/components/AvatarImage";
 
 /**
  * Splash: avatar color-fills top → bottom over ~2s, then fades into the site.
@@ -54,20 +55,16 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
     >
       <div className="relative h-[88px] w-[72px] sm:h-[100px] sm:w-[82px]">
         {/* Desaturated base — “empty” waiting to fill */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/Avatar.png"
-          alt=""
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-contain object-center opacity-25 grayscale"
+        <AvatarImage
+          variant="splash"
+          priority
+          className="absolute inset-0 opacity-25 grayscale"
         />
         {/* Full-color reveal, clipped top → bottom */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/Avatar.png"
-          alt=""
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-contain object-center"
+        <AvatarImage
+          variant="splash"
+          priority
+          className="absolute inset-0"
           style={{
             clipPath: `inset(0 0 ${100 - fill}% 0)`,
             WebkitClipPath: `inset(0 0 ${100 - fill}% 0)`,

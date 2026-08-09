@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Manrope, Space_Grotesk, Fredoka } from "next/font/google";
 import "./globals.css";
 import { TalkToTahaProvider } from "@/components/TalkToTaha";
+import { avatarAssets } from "@/components/AvatarImage";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -52,6 +53,17 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakartaSans.variable} ${manrope.variable} ${spaceGrotesk.variable} ${fredoka.variable}`}
     >
+      <head>
+        {/* Splash is first paint — preload tiny WebP so the fill starts immediately */}
+        <link
+          rel="preload"
+          as="image"
+          href={avatarAssets.splash.webp}
+          type="image/webp"
+          fetchPriority="high"
+        />
+        <link rel="preload" as="image" href={avatarAssets.hero.webp} type="image/webp" />
+      </head>
       <body className="antialiased">
         <TalkToTahaProvider>{children}</TalkToTahaProvider>
       </body>

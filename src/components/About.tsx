@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import Image from "next/image";
 import { useCountUp } from "@/hooks/useCountUp";
 import { siteConfig } from "@/lib/data";
 import { ResumeModal } from "@/components/ResumeModal";
+import { AvatarImage } from "@/components/AvatarImage";
 
 const stats = [
   { label: "Years Experience", value: "3+" },
@@ -190,13 +190,7 @@ function GlassCard({
           >
             <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#0071e3]/[0.08]" />
             <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ececee] ring-2 ring-white shadow-md">
-              <Image
-                src="/Avatar.png"
-                alt="Taha"
-                width={56}
-                height={56}
-                className="h-[92%] w-[92%] object-contain object-center"
-              />
+              <AvatarImage variant="mark" alt="Taha" className="h-[92%] w-[92%]" />
             </span>
             <div className="relative min-w-0">
               <p className="text-[20px] font-bold leading-tight text-gray-900">M. Taha Madni</p>

@@ -21,6 +21,10 @@
 # misc
 .DS_Store
 *.pem
+.tmp_avatar/
+.tmp_*.png
+.tmp_verify-*.png
+
 
 # debug
 npm-debug.log*

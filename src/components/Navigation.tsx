@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { navLinks } from "@/lib/data";
 import { MagneticButton } from "@/components/MagneticButton";
+import { AvatarImage } from "@/components/AvatarImage";
 
 /** Soft ease for height / fade — no layout thrash */
 const softEase = [0.22, 1, 0.36, 1] as const;
@@ -18,8 +19,7 @@ function BrandMark({ onClick }: { onClick: () => void }) {
       className="flex shrink-0 items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-70"
     >
       <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ececee] sm:size-10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/Avatar.png" alt="" className="h-[92%] w-[92%] object-contain object-center" />
+        <AvatarImage variant="mark" className="h-[92%] w-[92%]" />
       </span>
       <span className="font-brand text-[19px] font-semibold leading-none tracking-tight text-[#0a0a0a] sm:text-[22px]">
         Taha
