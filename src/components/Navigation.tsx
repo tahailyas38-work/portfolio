@@ -148,6 +148,30 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
   const compact = scrolledPast && !scrollUp && !hovered && !mobileOpen;
   const expanded = !compact;
 
+  const [isDesktop, setIsDesktop] = useState(false);
+  const shellWrapRef = useRef<HTMLDivElement>(null);
+  const [fullShellWidth, setFullShellWidth] = useState(768);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const el = shellWrapRef.current;
+    if (!el) return;
+    const measure = () => setFullShellWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const shellCompact = isDesktop && compact;
+
   const layoutTween = reduceMotion
     ? { duration: 0 }
     : { type: "spring" as const, stiffness: 70, damping: 18, mass: 1.1 };
@@ -190,7 +214,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
           visible ? "nav-header--visible" : "nav-header"
         }`}
       >
-        <div className="relative z-[1] flex w-full max-w-3xl justify-center">
+        <div ref={shellWrapRef} className="relative z-[1] flex w-full max-w-3xl justify-center">
           <motion.div
             onPointerEnter={(e) => {
               if (e.pointerType !== "mouse") return;
@@ -207,6 +231,8 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
             initial={false}
             animate={{
               borderRadius: mobileOpen ? 22 : 999,
+              // Pixel→pixel width so the spring actually interpolates (100% ↔ 240 snaps)
+              width: shellCompact ? 240 : fullShellWidth,
             }}
             transition={{
               borderRadius: reduceMotion ? { duration: 0 } : { duration: 0.42, ease: softEase },
@@ -214,7 +240,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
             }}
             className={`pointer-events-auto relative overflow-hidden border border-[#e6e6e6] bg-white/95 shadow-[0_8px_30px_rgba(15,23,42,0.1)] backdrop-blur-xl ${
               mobileOpen ? "bg-white shadow-[0_20px_50px_rgba(15,23,42,0.18)]" : ""
-            } ${compact ? "w-full md:w-[240px]" : "w-full"}`}
+            }`}
           >
             {/*
               Top row padding is IDENTICAL open/closed so brand + icon never jump.
@@ -223,7 +249,7 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
             <div
               className={`flex h-12 items-center pl-1.5 pr-1.5 sm:h-14 sm:pl-2 ${
                 mobileOpen ? "border-b border-[#eee]" : ""
-              } ${compact ? "justify-between sm:pr-2" : "justify-between gap-2 sm:gap-5 sm:pr-4"}`}
+              } ${shellCompact ? "justify-between sm:pr-2" : "justify-between gap-2 sm:gap-5 sm:pr-4"}`}
             >
               <div className="shrink-0">
                 <BrandMark onClick={backToTop} />
@@ -296,28 +322,27 @@ export function Navigation({ visible = true }: { visible?: boolean }) {
                 <MenuIcon open={mobileOpen} />
               </button>
 
-              {/* Desktop compact hamburger */}
+              {/* Desktop compact hamburger — stay in flow; animate width/opacity instead of remounting */}
               <motion.button
                 type="button"
                 initial={false}
                 animate={{
-                  opacity: compact ? 1 : 0,
-                  scale: compact ? 1 : 0.92,
+                  opacity: shellCompact ? 1 : 0,
+                  scale: shellCompact ? 1 : 0.92,
+                  width: shellCompact ? 36 : 0,
+                  marginLeft: shellCompact ? 0 : 0,
                 }}
                 transition={{
-                  opacity: compact ? fadeIn : fadeOut,
+                  opacity: shellCompact ? fadeIn : fadeOut,
                   scale: layoutTween,
+                  width: layoutTween,
                 }}
                 aria-label="Expand navigation"
-                aria-hidden={!compact}
-                tabIndex={compact ? 0 : -1}
+                aria-hidden={!shellCompact}
+                tabIndex={shellCompact ? 0 : -1}
                 onClick={() => setHovered(true)}
-                className={
-                  compact
-                    ? "hidden h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:flex"
-                    : "pointer-events-none absolute right-4 top-1/2 hidden h-0 w-0 -translate-y-1/2 overflow-hidden opacity-0 md:block"
-                }
-                style={{ pointerEvents: compact ? "auto" : "none" }}
+                className="hidden h-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[#6b7280] hover:bg-gray-100 hover:text-[#0a0a0a] md:flex"
+                style={{ pointerEvents: shellCompact ? "auto" : "none" }}
               >
                 <MenuIcon open={false} />
               </motion.button>
