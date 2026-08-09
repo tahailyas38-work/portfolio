@@ -208,7 +208,7 @@ function MicPermissionSheet({
           Not now
         </button>
         <p className="mt-3 text-center text-[11px] leading-relaxed text-gray-400">
-          On iPhone: tap aA in the address bar → Website Settings → Microphone → Allow, then try again.
+          {iosMicHelpText()}
         </p>
       </div>
     </div>,
@@ -229,6 +229,31 @@ function isIOSDevice() {
   if (/iPad|iPhone|iPod/.test(ua)) return true;
   // iPadOS desktop UA
   return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+
+type IosBrowserKind = "safari" | "chrome" | "google-app" | "other";
+
+/** Chrome/Google/Firefox on iOS all use WebKit, but mic UX differs from Safari. */
+function getIosBrowserKind(): IosBrowserKind | null {
+  if (!isIOSDevice()) return null;
+  const ua = navigator.userAgent || "";
+  if (/GSA\//i.test(ua)) return "google-app";
+  if (/CriOS/i.test(ua)) return "chrome";
+  if (/FxiOS|EdgiOS|OPiOS|YaBrowser/i.test(ua)) return "other";
+  return "safari";
+}
+
+function iosMicHelpText(kind: IosBrowserKind | null = getIosBrowserKind()) {
+  if (kind === "chrome") {
+    return "On iPhone Chrome: open the Settings app → Chrome → Microphone → On, then tap Allow microphone.";
+  }
+  if (kind === "google-app") {
+    return "The Google app’s browser often blocks live voice. Open this site in Safari or Chrome, then try Talk to Taha again.";
+  }
+  if (kind === "other") {
+    return "This iPhone browser may block the mic. Open the page in Safari or Chrome, then try again.";
+  }
+  return "On iPhone Safari: tap aA in the address bar → Website Settings → Microphone → Allow, then try again.";
 }
 
 /** iOS Safari needs AudioContext unlock + play-and-record session before WebRTC. */
@@ -401,7 +426,7 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     }
   }, [resetIdle]);
 
-  /** Mic unlock first in the same tap, then Vapi — required for iPhone Safari. */
+  /** Mic unlock first in the same tap, then Vapi — required for iPhone. */
   const startCallWithMic = useCallback(async (): Promise<"started" | "denied" | "failed"> => {
     const permission = await requestMicrophoneAccess();
     if (!permission.ok) {
@@ -409,12 +434,31 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     }
 
     const warmup = permission.stream;
+    const iosBrowser = getIosBrowserKind();
+
     try {
+      // Chrome / Google app on iOS reject a second getUserMedia while our warmup
+      // stream still holds the mic. Release first, then let Vapi open the device.
+      if (iosBrowser && iosBrowser !== "safari") {
+        releaseStream(warmup);
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 80);
+        });
+        setIOSAudioSession("play-and-record");
+        await unlockIOSAudio();
+        const started = await beginVapiCall();
+        return started ? "started" : "failed";
+      }
+
       const started = await beginVapiCall();
       return started ? "started" : "failed";
     } finally {
-      // Keep warmup tracks briefly so iOS doesn't drop the permission session.
-      window.setTimeout(() => releaseStream(warmup), 1500);
+      if (!iosBrowser || iosBrowser === "safari") {
+        // Safari: keep warmup briefly so the permission session stays warm.
+        window.setTimeout(() => releaseStream(warmup), 1500);
+      } else {
+        releaseStream(warmup);
+      }
     }
   }, [beginVapiCall]);
 
@@ -490,9 +534,11 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
       if (permissionDenied) {
         openMicPrompt(
           isIOSDevice()
-            ? "iPhone blocked the mic. Tap Allow microphone, or: aA → Website Settings → Microphone → Allow."
+            ? `iPhone blocked the mic. ${iosMicHelpText()}`
             : "Microphone is blocked for this site. Tap Allow microphone to try again."
         );
+      } else if (getIosBrowserKind() === "google-app") {
+        openMicPrompt(iosMicHelpText("google-app"));
       } else {
         setToast("Something went wrong starting the call. Please try again.");
       }
@@ -547,7 +593,7 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
     if (result === "denied") {
       openMicPrompt(
         isIOSDevice()
-          ? "Microphone permission was denied. Tap Allow microphone, or enable it under aA → Website Settings → Microphone."
+          ? `Microphone permission was denied. ${iosMicHelpText()}`
           : "Microphone permission was denied. Tap Allow microphone to try again."
       );
       return;
@@ -555,7 +601,7 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
 
     openMicPrompt(
       isIOSDevice()
-        ? "Couldn’t start on iPhone. Tap Allow microphone — Safari should ask for access."
+        ? `Couldn’t start on iPhone. ${iosMicHelpText()}`
         : "Couldn’t start the call. Tap Allow microphone to try again."
     );
   }, [openMicPrompt, startCallWithMic, status]);
@@ -571,13 +617,15 @@ export function TalkToTahaProvider({ children }: { children: ReactNode }) {
       if (result === "denied") {
         setMicHint(
           isIOSDevice()
-            ? "Still blocked on iPhone. Open Safari website settings (aA) → Microphone → Allow, then tap Allow microphone again."
+            ? `Still blocked on iPhone. ${iosMicHelpText()}`
             : "Still blocked. Enable Microphone in site settings, then try again."
         );
         return;
       }
       setMicHint(
-        "Still couldn’t start the call. Close this, tap Talk to Taha again, and allow the mic when Safari asks."
+        isIOSDevice()
+          ? `Still couldn’t start. ${iosMicHelpText()}`
+          : "Still couldn’t start the call. Close this, tap Talk to Taha again, and allow the mic when asked."
       );
     } finally {
       setMicBusy(false);
